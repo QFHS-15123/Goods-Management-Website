@@ -1,0 +1,8 @@
+<title>Hello from Flask</title>
+{% if error %}
+  <h1>An error: {{ error }}!</h1>
+{% elif name %}
+  <h1>Hi {{ name }}!</h1>
+{% else %}
+  <h1>Hello, World!</h1>
+{% endif %}
