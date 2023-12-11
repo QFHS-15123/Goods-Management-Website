@@ -191,3 +191,5 @@ onBeforeMount(() => {
 ...
 </script>
 ```
+
+# Connect Database

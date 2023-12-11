@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Flask (flask_proj/app.py:create_app)" type="Python.FlaskServer" nameIsGenerated="true">
+    <option name="additionalOptions" value="--port=5000" />
+    <option name="application" value="create_app" />
+    <module name="Goods-Management-Website" />
+    <option name="target" value="C:\Users\dvo4383\development\Goods-Management-Website\flask_proj\app.py" />
+    <option name="targetType" value="PATH" />
+    <option name="ENV_FILES" value="" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <option name="SDK_HOME" value="C:\Users\dvo4383\softwares\anaconda3\envs\Flask_Proj\python.exe" />
+    <option name="SDK_NAME" value="Flask_Proj" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="false" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+    <option name="launchJavascriptDebuger" value="false" />
+    <method v="2" />
+  </configuration>
+</component>

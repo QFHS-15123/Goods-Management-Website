@@ -14,6 +14,6 @@ const app = createApp(App).use(VueAxios, axios).use(ElementPlus)
 //     .mount('#app')
 
 // app.use(ElementPlus)
-app.config.globalProperties.$axios = axios;
+app.config.globalProperties.$axios = axios
 
 app.mount('#app')

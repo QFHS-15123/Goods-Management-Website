@@ -1,40 +1,64 @@
-from flask import Flask, request, render_template, make_response
+import os
+import sqlite3
+
+from flask import Flask, request, render_template, make_response, g
 from flask_cors import CORS
 
-app = Flask(__name__)
-CORS(app, supports_credentials=True)
 
+def create_app(test_config=None):
+    # create and configure the app
+    app = Flask(__name__, instance_relative_config=True)
+    CORS(app, supports_credentials=True)
+    app.config.from_mapping(
+        SECRET_KEY='dev',
+        DATABASE=os.path.join(app.instance_path, 'gmw.sqlite'),
+    )
 
-@app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
+    if test_config is None:
+        # load the instance config, if it exists, when not testing
+        app.config.from_pyfile('config.py', silent=True)
+    else:
+        # load the test config if passed in
+        app.config.from_mapping(test_config)
 
+    # ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
-def valid_login(param, param1):
-    print(1)
-    return 1
+    import db
+    db.init_app(app)
 
+    # a simple page that says hello
+    @app.route('/')
+    def hello_world():  # put application's code here
+        return 'Hello World!'
 
-def log_the_user_in(param):
-    print('User login: ' + str(param))
+    @app.route('/login', methods=['POST', 'GET'])
+    def login():
+        error = None
 
+        def valid_login(param, param1):
+            print(1)
+            return 1
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if valid_login(request.form['username'],
-                       request.form['password']):
-            log_the_user_in(request.form['username'])
-        else:
-            error = 'Invalid username/password'
-    # the code below is executed if the request method was GET or the credentials were invalid
-    res = make_response(render_template('hello.html', error=error))
-    res.status = '200'
-    res.headers['Access-Control-Allow-Origin'] = "*"
-    res.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
-    return res
+        def log_the_user_in(param):
+            print('User login: ' + str(param))
 
+        if request.method == 'POST':
+            if valid_login(request.form['username'],
+                           request.form['password']):
+                log_the_user_in(request.form['username'])
+            else:
+                error = 'Invalid username/password'
+        # the code below is executed if the request method was GET or the credentials were invalid
+        res = make_response(render_template('hello.html', error=error))
+        res.status = '200'
+        res.headers['Access-Control-Allow-Origin'] = "*"
+        res.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
+        return res
 
-if __name__ == '__main__':
-    app.run()
+    return app
+
+create_app()

@@ -2,16 +2,15 @@
 import userApi from '../api/index'
 import { getCurrentInstance, onBeforeMount, ref } from 'vue'
 
-const user = {}
-const testData = {
-  user: "QFHS",
+const user = {
+  username: "QFHS",
   password: "15123",
 }
 
 // let { proxy } = getCurrentInstance();
 
 onBeforeMount(() => {
-  userApi.login(testData)
+  userApi.login(user)
       .then(res =>{
         console.log(res.data)
       })

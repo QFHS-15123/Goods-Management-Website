@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "axios": "^1.6.2",
+    "element-plus": "^2.4.3",
+    "vite": "^5.0.7",
+    "vue-axios": "^3.5.2"
+  }
+}
