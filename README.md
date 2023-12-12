@@ -4,48 +4,50 @@
 ### Introduction to Flask  
 Initialize a flask project in PyCharm.  
 #### Most Simple Example  
-```Python  
-from flask import Flask, escape, request    
- app = Flask(__name__)    
-    
- @app.route('/') def hello_world():  # put application's code here    
-return 'Hello World!'   
-  
-if __name__ == '__main__':    
-    app.run()  
-```  
-  
-Default site is http://127.0.0.1:5000. Visit it to check your progress.  
+```Python
+# app.py
+import os
+from flask import Flask
+
+def create_app(test_config=None):
+  # create and configure the app
+  app = Flask(__name__, instance_relative_config=True)
+
+  # a simple page that says hello
+  @app.route('/hello')
+  def hello():
+    return 'Hello, World!'
+
+  return app
+```
+Run/Debug Configurations:
+Target type: Script path
+Target: ... /app.py
+Application: create_app
+Additional options: --port=5000
+FLASK_ENV: development
+
+The application run at http://127.0.0.1:5000. Visit to check your progress.  
   
 #### Http in Flask  
 Get: Front want something from Back.  
 Post: Front send something to Back.  
 ##### Code  
 ```python  
-# __init__.py  
-def valid_login(param, param1):    
-    return 1    
-    
- def log_the_user_in(param):    
-print('User login: ' + str(param))   
-  
+# app.py  
 @app.route('/login', methods=['POST', 'GET']) def login():    
-    error = None    
- if request.method == 'POST':    
-        if valid_login(request.form['username'],    
-                       request.form['password']):    
-            log_the_user_in(request.form['username'])    
-        else:    
-            error = 'Invalid username/password'    
+  error = None    
+  if request.method == 'POST':    
+    if valid_login(request.form['username'], request.form['password']):    
+      log_the_user_in(request.form['username'])    
+    else:    
+      error = 'Invalid username/password'    
   # the code below is executed if the request method was GET or the credentials were invalid    
   return render_template('hello.html', error=error)  
 ```  
-Don't forget to create template hello.html  
-```  
-/yourapplication  
- /__init__.py /templates /hello.html```  
-```html  
-<!--hello.html-->  
+Don't forget to create the template `hello.html`
+```html
+<!--/templates/hello.html-->  
 <title>Hello from Flask</title> {% if error %}    
 <h1>An error: {{ error }}!</h1> {% else %}    
 <h1>Hello, World!</h1> {% endif %}  
@@ -65,7 +67,7 @@ Click Push button and check the response:
 <h1>Hello, World!</h1>  
 ```  
 ###### Invalid  
-Add a form-data as Body:   
+Add a form-data as Body: 
 |Key|Value|  
 |---|---|  
 |username|QFHS|  
@@ -82,10 +84,10 @@ Install flask-cors
 
 For each function:  
 ```python 
-res = make_response(render_template('hello.html', error=error))  
-res.status = '200'  
-res.headers['Access-Control-Allow-Origin'] = "*"  
-res.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'  
+res = make_response(render_template('hello.html', error=error))
+res.status = '200'
+res.headers['Access-Control-Allow-Origin'] = "*"
+res.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
 ```  
 ## Front End (Vue)  
 ### Prepare Environment and Initialize a Project  
@@ -193,3 +195,85 @@ onBeforeMount(() => {
 ```  
   
 # Flask <-> SQLite
+```py
+# db.py
+import sqlite3
+
+import click
+from flask import current_app, g
+
+
+def get_db():
+  if 'db' not in g:
+    g.db = sqlite3.connect(
+      current_app.config['DATABASE'],
+      detect_types=sqlite3.PARSE_DECLTYPES
+    )
+    g.db.row_factory = sqlite3.Row
+
+  return g.db
+
+
+def close_db(e=None):
+  db = g.pop('db', None)
+
+  if db is not None:
+    db.close()
+
+
+def init_db():
+  db = get_db()
+
+  with current_app.open_resource('schema.sql') as f:
+    db.executescript(f.read().decode('utf8'))
+
+
+@click.command('init-db')
+def init_db_command():
+  """Clear the existing data and create new tables."""
+  init_db()
+  click.echo('Initialized the database.')
+
+
+def init_app(app):
+  app.teardown_appcontext(close_db)
+  app.cli.add_command(init_db_command)
+```
+```py
+# app.py
+def create_app(test_config=None):
+  ...
+  app.config.from_mapping(
+    SECRET_KEY='dev',
+    DATABASE=os.path.join(app.instance_path, 'gmw.sqlite'),
+  )
+
+  # ensure the instance folder exists
+  try:
+    os.makedirs(app.instance_path)
+  except OSError:
+    pass
+
+  db.init_app(app)
+  
+  ...
+
+return app
+```
+```sql
+-- schema.sql
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL
+);
+```
+Before all, the datebase file needs to be built. Run the following codes just for one time per project. 
+```py
+# app.py
+if __name__ == '__main__':
+  app = create_app()
+  with app.app_context():
+    db.init_db_command()
+```
+
