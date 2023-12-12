@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<boxMapping>
+    <sql label="GET_ALL_BOXES">
+        SELECT * FROM box;
+    </sql>
+</boxMapping>

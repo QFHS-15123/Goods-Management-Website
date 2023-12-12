@@ -1,5 +1,18 @@
-CREATE TABLE user (
+CREATE TABLE box (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  name TEXT NOT NULL,
+  comment TEXT,
+  updated_time TEXT NOT NULL,
+  created_time TEXT NOT NULL
+);
+
+CREATE TABLE goods (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  status TEXT NOT NULL,
+  comment TEXT,
+  updated_time TEXT NOT NULL,
+  created_time TEXT NOT NULL,
+  box_id INTEGER NOT NULL,
+  FOREIGN KEY (box_id) REFERENCES box(id)
 );
