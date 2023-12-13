@@ -1,6 +1,6 @@
 <script setup name="HelloWorld">
 import userApi from '../api/index'
-import { getCurrentInstance, onBeforeMount, ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 
 const user = {
   username: "QFHS",
@@ -14,17 +14,6 @@ onBeforeMount(() => {
       .then(res =>{
         console.log(res.data)
       })
-  // proxy.$http
-  //   .post("/api/login", {
-  //     user: "QFHS",
-  //     password: "15123",
-  //   })
-  //   .then(function(res) {
-  //     console.log(res.data)
-  //   })
-  //   .catch(function(error) {
-  //     console.log(error);
-  //   });
 });
 
 defineProps({
