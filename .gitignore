@@ -246,3 +246,19 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# macOS
+
+.DS_Store
+
+# Node
+
+node_modules
+
+# IDE
+
+.idea/
+
+.code/
+
+.vscode/

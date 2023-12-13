@@ -1,0 +1,5 @@
+TABLE_NAME_BOX = 'box'
+TABLE_NAME_GOODS = 'goods'
+
+COL_BOX_ID = COL_GOODS_ID = 'id'
+COL_BOX_NAME = COL_GOODS_NAME = 'name'

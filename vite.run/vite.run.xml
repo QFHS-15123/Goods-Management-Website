@@ -5,7 +5,7 @@
     <scripts>
       <script value="dev" />
     </scripts>
-    <node-interpreter value="$USER_HOME$/softwares/Nodejs/node" />
+    <node-interpreter value="D:/Nodejs/Nodejs20/node" />
     <envs />
     <method v="2" />
   </configuration>
