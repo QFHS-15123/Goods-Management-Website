@@ -59,7 +59,7 @@ Click Push button and check the response:
 ```html 
 <title>Hello from Flask</title> 
 <h1>Hello, World!</h1> 
-``` 
+```
 Test invalid request:
 Add a form-data as Body: 
 |Key|Value|
@@ -321,3 +321,23 @@ def get_all_boxes():
     response[box[COL_BOX_ID]] = tuple(box[1:])
   return json.dumps(response, ensure_ascii=False)  # ensure_ascii=False: Ensure the correct output of Chinese
 ```
+
+
+
+router in vite
+
+
+
+Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/vue.js?v=f06f561a' does not provide an export named 'default'
+
+Revise `import Router from 'vue-router'` into `import * as Router from 'vue-router'`
+
+
+
+
+
+
+
+Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/vue.js?v=95066444' does not provide an export named 'default'
+
+Revise `import vue from 'vue'` into ``
