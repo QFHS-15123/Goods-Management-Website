@@ -217,13 +217,19 @@ app.register_blueprint(box.bp)
 import sqlite3
 from flask import current_app, g
 
+def dict_factory(cursor, row):
+  d = {}
+  for idx, col in enumerate(cursor.description):
+    d[col[0]] = row[idx]
+  return d
+
 def get_db():
   if 'db' not in g:
     g.db = sqlite3.connect(
       current_app.config['DATABASE'],
       detect_types=sqlite3.PARSE_DECLTYPES
     )
-    g.db.row_factory = sqlite3.Row
+    g.db.row_factory = dict_factory  # Returns query results as a dictionary
 
   return g.db
 
@@ -306,47 +312,65 @@ if __name__ == '__main__':
   with app.app_context():
   db.init_db_command()
 ```
-# First Function: Show All Boxes
-## Back End
+# Function: Show All Boxes
+## Flask
 ```py
 # box.py
-import json
 from db import get_db
+from tools import *
 
 @bp.route('/', methods=['GET'])
 def get_all_boxes():
   db = get_db()
-  response = dict()
+  res_data = []
   boxes = db.execute(f'SELECT * FROM {TABLE_NAME_BOX}').fetchall()
   for box in boxes:
-    response[box[COL_BOX_ID]] = tuple(box[1:])
-  return json.dumps(response, ensure_ascii=False)  # ensure_ascii=False: Ensure the correct output of Chinese
+    box.pop(COL_NAME_ID_BOX)
+    res_data.append(box)
+  return generate_response(data=res_data)
+```
+```py
+# tools.py
+import json
+
+def generate_response(data, message: str = SUCCESS_MESSAGE, status_code: int = SUCCESS_CODE) -> json:
+  result = json.dumps({'message': message, 'status_code': status_code, 'data': data}, indent=2, ensure_ascii=False)  # ensure_ascii=False: Ensure the correct output of Chinese
+  return result
 ```
 Response:
 ```json
 {
-  "1": [
-    "Age",
-    "年龄",
-    "2023/10/16",
-    "2023/10/12"
-  ],
-  "2": [
-    "Department",
-    "在当前公司的工作年数",
-    "2023/10/17",
-    "2023/10/13"
-  ],
-  "3": [
-    "EmployeeCount",
-    "所属部门",
-    "2023/10/18",
-    "2023/10/14"
+  "message": "Success",
+  "status_code": 200,
+  "data": [
+    {
+      "id": 1,
+      "name": "Age",
+      "comment": "年龄",
+      "updated_time": "2023/10/16",
+      "created_time": "2023/10/12"
+    },
+    {
+      "id": 2,
+      "name": "Department",
+      "comment": "在当前公司的工作年数",
+      "updated_time": "2023/10/17",
+      "created_time": "2023/10/13"
+    },
+    {
+      "id": 3,
+      "name": "EmployeeCount",
+      "comment": "所属部门",
+      "updated_time": "2023/10/18",
+      "created_time": "2023/10/14"
+    }
   ]
 }
 ```
-## Front End
+## Vite
 First, add router.
+
+Remember that router in vite is not the same as that in vue.
 ```js
 // main.js
 import router from "./router/index.js";
@@ -355,34 +379,62 @@ createApp(App).use(router)
 ```
 ```js
 // src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import routes from './routes'
 
-import Router from 'vue-router'
-export default new Router({
-  routes: [
-  ...
-    {
-      path: '/box',
-      name: 'Box',
-      component: BoxView
-    }
-  ...
-  ]
+const router = createRouter({
+  history: createWebHistory(),
+  routes: routes,
 })
+
+router.beforeEach((to, from, next) => {
+  next()
+})
+
+router.afterEach((to, from) => {
+  const _title = to.meta.title
+  if (_title) {
+    window.document.title = _title
+  }
+})
+
+export default router
+```
+```js
+// src/router/routes.js
+const routes = [
+  {
+    path: '/box',
+    name: 'BoxView',
+    title: 'BoxView',
+    component: () => import('../views/BoxView.vue')
+  }
+]
+export default routes
 ```
 Second, get response in the view.
 ```vue
 <!--src/views/BoxView.vue-->
 <script setup name="BoxView">
-import boxApi from "../api/index.js";
+import { ref } from "vue";
+import apis from "../api/index.js";
 
-let boxs = {}
-onBeforeMount(() => {
-  boxApi.get_all_boxes(user)
-    .then(res =>{
-    console.log(res.data)
-    })
-});
+let boxData = ref([])
+apis.get_all_boxes()
+  .then(res =>{
+    boxData.value = res.data.data
+  })
 </script>
+
+<template>  
+<div>  
+ <el-table :data="boxData" style="width: 100%">  
+ <el-table-column prop="name" label="Name" width="180" />  
+ <el-table-column prop="updated_time" label="Updated time" width="180" />  
+ <el-table-column prop="created_time" label="Created time" width="180" />  
+ <el-table-column prop="comment" label="Comment" />  
+ </el-table></div>  
+</template>
 ```
 Third, write axios request in the api file.
 ```js
@@ -397,7 +449,143 @@ export default {
   ...
 }
 ```
+# Function: Show All Goods in the Selected Box
+## Flask
+[How to pass parameters](https://blog.csdn.net/ling620/article/details/107562294)
+```py
+# goods.py
 
+bp = Blueprint('goods', __name__, url_prefix='/goods')
+
+@bp.route('/', methods=['GET'])
+def get_all_goods():
+  box_name = request.args.get('box_name')
+  box_name = '\'' + box_name + '\''
+  db = get_db()
+  res_data = []
+  goods_list = (db.execute(f'SELECT * FROM {TABLE_NAME_GOODS} '
+               f'LEFT JOIN {TABLE_NAME_BOX} ON {TABLE_NAME_BOX}.{COL_NAME_ID_BOX} = {TABLE_NAME_GOODS}.{COL_NAME_BOX_ID_GOODS} '
+               f'WHERE {TABLE_NAME_BOX}.{COL_NAME_NAME_BOX} = {box_name};')
+          .fetchall())
+  for goods in goods_list:
+    goods.pop(COL_NAME_ID_GOODS)
+    res_data.append(goods)
+  return generate_response(data=res_data)
+```
+### Test
+In Postman, set GET: http://127.0.0.1:5000/goods?box_name=Age
+Response:
+```js
+{
+  "message": "Success",
+  "status_code": 200,
+  "data": [
+    {
+      "id": 1,
+      "name": "Age",
+      "status": "good",
+      "comment": "年龄",
+      "updated_time": "2023/10/16",
+      "created_time": "2023/10/12",
+      "box_id": 1
+    },
+    {
+      "id": 1,
+      "name": "Age",
+      "status": "bad",
+      "comment": "年龄",
+      "updated_time": "2023/10/16",
+      "created_time": "2023/10/12",
+      "box_id": 1
+    }
+  ]
+}
+```
+## Vite
+### Write View and Api
+```vue
+<!--src/views/GoodsView.vue-->
+<script setup name="GoodsView">
+import { ref } from "vue";  
+import apis from "../api/index.js";
+
+const boxName = 'Age'
+let goodsData = ref([])
+apis.get_all_goods(boxName)
+  .then(res =>{
+    goodsData.value = res.data.data
+  })
+</script>
+
+<template>
+<div>
+  <el-table
+      :data="goodsData"
+      style="width: 100%">
+    <el-table-column prop="name" label="Name" width="180" />
+    <el-table-column prop="status" label="Status" width="180" />
+    <el-table-column prop="updated_time" label="Updated time" width="180" />
+    <el-table-column prop="created_time" label="Created time" width="180" />
+    <el-table-column prop="comment" label="Comment" />
+  </el-table>
+</div>
+</template>
+```
+```js
+// src/api/index.js
+export default {
+  get_all_goods(boxName) {
+    return service({
+      url: '/goods?box_name=' + boxName,
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
+}
+```
+### Page Jump
+```vue
+<!--src/views/BoxView.vue-->
+<script setup name="BoxView">
+import { useRouter } from "vue-router";
+
+let $router = useRouter()
+function handleCurrentChange(currentRow){
+  console.log(1)
+  console.log(currentRow.name)
+  $router.push({
+    path: '/goods',
+    query: { boxName: currentRow.name}
+  })
+}
+</script>
+
+<template>
+<div>
+  <el-table :data="boxData"
+            highlight-current-row
+            @current-change="handleCurrentChange"
+            style="width: 100%">
+  ...
+  </el-table>
+</div>
+</template>
+```
+```vue
+<!--src/views/GoodsView.vue-->
+<script setup name="GoodsView">
+import { useRoute } from "vue-router";
+
+const route = useRoute()  
+let boxName = route.query.boxName
+</script>
+```
+[Page Jumps with Parameters](https://blog.csdn.net/animatecat/article/details/117257037)
+
+# Tips
+1. `<script setup>` equals to `created`
 # Error Record
 1. `@rollup\rollup-win32-x64-msvc\rollup.win32-x64-msvc.no de is not a valid Win32 application.`
 	Solve: `npm i @rollup/rollup-win32-x64-msvc`

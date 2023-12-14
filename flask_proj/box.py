@@ -1,4 +1,3 @@
-import json
 from flask import Blueprint
 
 from db import get_db
@@ -13,5 +12,6 @@ def get_all_boxes():
     res_data = []
     boxes = db.execute(f'SELECT * FROM {TABLE_NAME_BOX}').fetchall()
     for box in boxes:
+        box.pop(COL_NAME_ID_BOX)
         res_data.append(box)
     return generate_response(data=res_data)
