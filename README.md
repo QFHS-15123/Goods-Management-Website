@@ -59,7 +59,7 @@ Click Push button and check the response:
 ```html 
 <title>Hello from Flask</title> 
 <h1>Hello, World!</h1> 
-```
+``` 
 Test invalid request:
 Add a form-data as Body: 
 |Key|Value|
@@ -306,7 +306,8 @@ if __name__ == '__main__':
   with app.app_context():
   db.init_db_command()
 ```
-### A Simple Query
+# First Function: Show All Boxes
+## Back End
 ```py
 # box.py
 import json
@@ -321,23 +322,84 @@ def get_all_boxes():
     response[box[COL_BOX_ID]] = tuple(box[1:])
   return json.dumps(response, ensure_ascii=False)  # ensure_ascii=False: Ensure the correct output of Chinese
 ```
+Response:
+```json
+{
+  "1": [
+    "Age",
+    "年龄",
+    "2023/10/16",
+    "2023/10/12"
+  ],
+  "2": [
+    "Department",
+    "在当前公司的工作年数",
+    "2023/10/17",
+    "2023/10/13"
+  ],
+  "3": [
+    "EmployeeCount",
+    "所属部门",
+    "2023/10/18",
+    "2023/10/14"
+  ]
+}
+```
+## Front End
+First, add router.
+```js
+// main.js
+import router from "./router/index.js";
 
+createApp(App).use(router)
+```
+```js
+// src/router/index.js
 
+import Router from 'vue-router'
+export default new Router({
+  routes: [
+  ...
+    {
+      path: '/box',
+      name: 'Box',
+      component: BoxView
+    }
+  ...
+  ]
+})
+```
+Second, get response in the view.
+```vue
+<!--src/views/BoxView.vue-->
+<script setup name="BoxView">
+import boxApi from "../api/index.js";
 
-router in vite
+let boxs = {}
+onBeforeMount(() => {
+  boxApi.get_all_boxes(user)
+    .then(res =>{
+    console.log(res.data)
+    })
+});
+</script>
+```
+Third, write axios request in the api file.
+```js
+export default {
+  ...
+  get_all_boxes(){
+    return service({
+      url: '/box',
+      method: 'get',
+    })
+  },
+  ...
+}
+```
 
-
-
-Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/vue.js?v=f06f561a' does not provide an export named 'default'
-
-Revise `import Router from 'vue-router'` into `import * as Router from 'vue-router'`
-
-
-
-
-
-
-
-Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/vue.js?v=95066444' does not provide an export named 'default'
-
-Revise `import vue from 'vue'` into ``
+# Error Record
+1. `@rollup\rollup-win32-x64-msvc\rollup.win32-x64-msvc.no de is not a valid Win32 application.`
+	Solve: `npm i @rollup/rollup-win32-x64-msvc`
+2. `Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/vue.js?v=f06f561a' does not provide an export named 'default'`
+	Solve: Router in vite is different from that in vue
