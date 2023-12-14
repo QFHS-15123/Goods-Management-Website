@@ -5,7 +5,7 @@
     <scripts>
       <script value="dev" />
     </scripts>
-    <node-interpreter value="D:/Nodejs/Nodejs20/node" />
+    <node-interpreter value="$USER_HOME$/softwares/anaconda3/envs/GMW/node" />
     <envs />
     <method v="2" />
   </configuration>

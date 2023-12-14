@@ -1,6 +1,6 @@
 const routes = [
     {
-        path: '/',
+        path: '/box',
         name: 'BoxView',
         title: 'BoxView',
         component: () => import('../views/BoxView.vue'), //.vue不能省略
