@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import apis from "../api/index.js";
 import { useRoute } from "vue-router";
+import { Plus } from '@element-plus/icons-vue'
 
 const route = useRoute()
 let boxName = route.query.boxName
@@ -17,6 +18,7 @@ apis.get_all_goods(boxName)
 
 <template>
 <div>
+  <el-button type="primary" :icon="Plus" circle />
   <el-table
       :data="goodsData"
       style="width: 100%">

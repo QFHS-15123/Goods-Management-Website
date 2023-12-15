@@ -1,5 +1,10 @@
 const routes = [
     {
+        path: '/test',
+        name: 'TestView',
+        title: 'TestView',
+        component: () => import('../views/TestView.vue'), //.vue不能省略
+    },{
         path: '/box',
         name: 'BoxView',
         title: 'BoxView',
