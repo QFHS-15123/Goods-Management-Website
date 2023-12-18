@@ -27,5 +27,15 @@ export default {
                 'Content-Type': 'application/json'
             }
         })
+    },
+    add_box(newBox) {
+        return service({
+            url: 'addBox',
+            method: 'post',
+            data: newBox,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
     }
 }

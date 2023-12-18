@@ -419,14 +419,14 @@ const routes = [
     path: '/box',
     name: 'BoxView',
     title: 'BoxView',
-    component: () => import('../views/BoxView.vue')
+    component: () => import('../views/Box.vue')
   }
 ]
 export default routes
 ```
 Second, get response in the view.
 ```vue
-<!--src/views/BoxView.vue-->
+<!--src/views/Box.vue-->
 <script setup name="BoxView">
 import { ref } from "vue";
 import apis from "../api/index.js";
@@ -516,7 +516,7 @@ Response:
 ## Vite
 ### Write View and Api
 ```vue
-<!--src/views/GoodsView.vue-->
+<!--src/views/HomeView.vue-->
 <script setup name="GoodsView">
 import { ref } from "vue";  
 import apis from "../api/index.js";
@@ -559,7 +559,7 @@ export default {
 ```
 ### Page Jump
 ```vue
-<!--src/views/BoxView.vue-->
+<!--src/views/Box.vue-->
 <script setup name="BoxView">
 import { useRouter } from "vue-router";
 
@@ -586,7 +586,7 @@ function handleCurrentChange(currentRow){
 </template>
 ```
 ```vue
-<!--src/views/GoodsView.vue-->
+<!--src/views/HomeView.vue-->
 <script setup name="GoodsView">
 import { useRoute } from "vue-router";
 

@@ -1,24 +1,29 @@
-<script setup name="GoodsView">
-import { ref } from "vue";
-import apis from "../api/index.js";
-import { useRoute } from "vue-router";
+<script setup name="HomeView" lang="ts">
+import {Ref, ref} from "vue";
+import {useRoute, useRouter} from "vue-router";
 import { Plus } from '@element-plus/icons-vue'
 
-const route = useRoute()
-let boxName = route.query.boxName
+const drawer = ref(false)
 
-let goodsData = ref([])
 
-apis.get_all_goods(boxName)
-    .then(res =>{
-      goodsData.value = res.data.data
-    })
+interface Box {
+  name: string
+  comment?: string
+  updated_time: string
+  created_time: string
+}
+
+let boxData: Ref<Box[]> = ref([])
+
+apis.get_all_boxes().then(res =>{
+  boxData.value = res.data.data
+})
+
 
 </script>
 
 <template>
 <div>
-  <el-button type="primary" :icon="Plus" circle />
   <el-table
       :data="goodsData"
       style="width: 100%">
@@ -29,6 +34,11 @@ apis.get_all_goods(boxName)
     <el-table-column prop="comment" label="Comment" />
   </el-table>
 </div>
+
+   <el-drawer v-model="drawer" title="Boxes">
+  <!--  :before-close="handleClose"-->
+
+  </el-drawer>
 </template>
 
 <style scoped>

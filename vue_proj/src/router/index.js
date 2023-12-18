@@ -33,13 +33,13 @@ export default router
 // import vue from 'vue'
 // import { createRouter,createWebHistory } from 'vue-router'
 // // import HelloWorld from '../components/HelloWorld'
-// import BoxView from '../views/BoxView.vue'
+// import BoxView from '../views/Box.vue'
 //
 // const routes = [
 //     {
 //         path: '/box',
 //         name: 'BoxView',
-//         component: () => import('../views/BoxView.vue')
+//         component: () => import('../views/Box.vue')
 //     }
 // ]
 // // vue.use(Router)
