@@ -1,3 +1,4 @@
+
 # Initialize
 ## Initialize Back End (Flask)
 Initialize a flask project in PyCharm.
@@ -86,7 +87,8 @@ res.headers['Access-Control-Allow-Methods'] = 'PUT,GET,POST,DELETE'
 ### Prepare Environment and Initialize a Project
 1. Install [Node.js](https://nodejs.org/en/download/)
 2. IDEA create a Vite Project
-3. Run. Default  Local:   http://localhost:5173/ 4. Install element-plus
+3. Run. Default  Local:   http://localhost:5173/ 
+4. Install [element-plus](https://element-plus.org)
 ```js
 // main.js
 import ElementPlus from " element-plus";
@@ -95,6 +97,16 @@ createApp(App)
   ...
   .use(ElementPlus)
   ... 
+```
+5. Install [@element-plus/icons-vue](https://element-plus.org/zh-CN/component/icon.html)
+```js
+// main.js
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {  
+  app.component(key, component)  
+}
+
 ```
 ### Prepare Api
 #### Set Proxy 
@@ -591,3 +603,10 @@ let boxName = route.query.boxName
 	Solve: `npm i @rollup/rollup-win32-x64-msvc`
 2. `Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/vue.js?v=f06f561a' does not provide an export named 'default'`
 	Solve: Router in vite is different from that in vue
+3. No styles
+	Solve: Add `import 'element-plus/dist/index.css'` to `main.js` **GOD! THAT BOTHERED ME TWO HOURS!!!!!**
+
+
+function getKeyNames<T>(obj: T): (keyof T)[] {  
+  return Object.keys(obj) as (keyof T)[]  
+}
