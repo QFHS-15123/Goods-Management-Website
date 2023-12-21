@@ -23,32 +23,47 @@ const changeBox = (val) => {
   })
 }
 
-let newBox: Box = {
-  name: null,
-  comment: null,
-  updated_time: null,
-  created_time: null
-}
+// let newBox: Ref<Box> = ref({
+//   name: null,
+//   comment: null,
+//   updated_time: null,
+//   created_time: null
+// })
 
-let isForm = false
-const onSubmit = () => {
+let newBox: ref<FormData> = new FormData()
+
+let isForm = ref(false)
+
+const onSubmitForm = () => {
+  let currentDate = new Date()
+  let date = currentDate.toLocaleDateString()
+  newBox.append('name', )
+  newBox.value.updated_time = String(date)
+  newBox.value.created_time = String(date)
   console.log('submit!')
+  console.log(newBox.value)
+  apis.add_box(newBox).then(res =>{
+    console.log(res)
+  })
 }
 </script>
 
 <template>
-  <el-button v-for="box in boxData" :key="box.name" text @click="changeBox($event)">
-    {{ box.name }}
-  </el-button>
 
-  <el-button @click="isForm = true">Add Box</el-button>
+  <div v-for="box in boxData">
+    <el-button :key="box.name" text @click="changeBox($event)">
+      {{ box.name }}
+    </el-button>
+  </div>
+
+  <el-button @click="isForm=true">Add Box</el-button>
 
   <el-form v-show="isForm" :model="newBox">
     <el-form-item label="Name">
       <el-input v-model="newBox.name" />
     </el-form-item>
     <el-form-item label="Comment">
-      <el-input v-model="newBox.comment" />
+      <el-input v-model="newBox.comment" type="textarea" autosize />
     </el-form-item>
     <el-button type="primary" @click="onSubmitForm">Create</el-button>
   </el-form>

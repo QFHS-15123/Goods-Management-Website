@@ -4,6 +4,7 @@ import apis from "../api/index.js";
 import { useRouter } from "vue-router";
 import {ElMessageBox, TableColumnCtx} from "element-plus";
 import { Plus } from "@element-plus/icons-vue";
+import {FALSE} from "sass";
 
 interface Box {
   name: string
@@ -76,18 +77,38 @@ const handleCurrentChange = (val: Box | undefined) => {
 //   boxData.value.push(newRow)
 // }
 
+let isForm = false
+
 </script>
 
 <template>
-  <el-row :gutter="20">
-    <el-col :span="8" v-for="box in boxData" :key="box.name" :data="boxData">
-      <div class="box-container">
-        <div class="name-container">{{ box.name }}</div>
-<!--        <el-divider />-->
-        <div class="comment-container">{{ box.comment }}</div>
-      </div>
-      </el-col>
-  </el-row>
+    <el-button @click="isForm=true">Add Box</el-button>
+
+  <el-dialog
+    v-model="dialogVisible"
+    title="Tips"
+    width="30%"
+    :before-close="handleClose"
+  >
+    <span>This is a message</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+<!--  <el-row :gutter="20">-->
+<!--    <el-col :span="8" v-for="box in boxData" :key="box.name" :data="boxData">-->
+<!--      <div class="box-container">-->
+<!--        <div class="name-container">{{ box.name }}</div>-->
+<!--&lt;!&ndash;        <el-divider />&ndash;&gt;-->
+<!--        <div class="comment-container">{{ box.comment }}</div>-->
+<!--      </div>-->
+<!--      </el-col>-->
+<!--  </el-row>-->
 </template>
 
 <style lang="scss">

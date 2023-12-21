@@ -30,7 +30,7 @@ export default {
     },
     add_box(newBox) {
         return service({
-            url: 'addBox',
+            url: '/box/addBox',
             method: 'post',
             data: newBox,
             headers: {
