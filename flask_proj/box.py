@@ -22,7 +22,8 @@ def get_all_boxes():
 @bp.route('/addBox', methods=['POST'])
 def add_box():
     db = get_db()
-    box = request.form
+    box = request.json['_value']
+    print(box)
     update_cursor = db.execute(mapping.insert_box(box_name=box['name'],
                                                   box_comment=box['comment'],
                                                   box_created_time=box['created_time'],

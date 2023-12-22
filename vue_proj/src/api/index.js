@@ -34,7 +34,7 @@ export default {
             method: 'post',
             data: newBox,
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/json'
             }
         })
     }
