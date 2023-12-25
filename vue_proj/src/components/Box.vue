@@ -10,9 +10,7 @@ interface Box {
   created_time: string
 }
 
-// let isDelPop = ref([])
-let isDelPop = ref([]);
-console.log(typeof isDelPop)
+let isDelPop:boolean[] = []
 
 let boxData: Ref<Box[]> = ref([])
 apis.get_all_boxes().then(res =>{
