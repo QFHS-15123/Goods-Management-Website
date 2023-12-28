@@ -3,7 +3,8 @@ CREATE TABLE box (
   name TEXT NOT NULL,
   comment TEXT,
   updated_time TEXT NOT NULL,
-  created_time TEXT NOT NULL
+  created_time TEXT NOT NULL,
+  is_deleted integer default false not null
 );
 
 CREATE TABLE goods (

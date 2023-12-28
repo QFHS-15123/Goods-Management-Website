@@ -8,14 +8,23 @@ interface Box {
   comment?: string
   updated_time: string
   created_time: string
+  if_deleted?: boolean
 }
 
 let isDelPop:boolean[] = []
 
 let boxData: Ref<Box[]> = ref([])
+
+let deletedBox: Array<string> = []
+
 apis.get_all_boxes().then(res =>{
   boxData.value = res.data.data
   let i:number
+  for (i = 0; i<boxData.value.length; i++){
+    if (boxData.value[i] == true){
+     deletedBox.push(boxData.value[i].name)
+    }
+  }
   for (i = 0; i<boxData.value.length; i++){
     isDelPop[i] = false
   }
@@ -68,6 +77,13 @@ const onSubmitForm = () => {
       </template>
     </el-popover>
   </div>
+
+  <el-collapse>
+    <el-collapse-item title="Trash">
+      <div v-for="(box,idx) in boxData">
+      </div>
+    </el-collapse-item>
+ </el-collapse>
 
   <el-button @click="isAddBoxForm=true">Add Box</el-button>
 
