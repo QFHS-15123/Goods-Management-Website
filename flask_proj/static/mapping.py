@@ -8,6 +8,7 @@ BOX_CREATED_TIME = GOODS_CREATED_TIME = 'created_time'
 BOX_UPDATED_TIME = GOODS_UPDATED_TIME = 'updated_time'
 GOODS_STATUS = 'status'
 GOODS_BOX_ID = 'box_id'
+BOX_IS_DELETED = GOODS_IS_DELETED = 'is_deleted'
 
 
 def query_all_boxes():
@@ -23,4 +24,10 @@ def query_all_goods(box_name):
 def insert_box(box_name, box_comment, box_created_time, box_updated_time):
     return f'INSERT INTO {BOX_TABLE_NAME} \
              ({BOX_NAME}, {BOX_COMMENT}, {BOX_CREATED_TIME}, {BOX_UPDATED_TIME})\
-              VALUES (\'{box_name}\', \'{box_comment}\', \'{box_created_time}\', \'{box_updated_time}\')'
+              VALUES (\'{box_name}\', \'{box_comment}\', \'{box_created_time}\', \'{box_updated_time}\');'
+
+
+def del_box(box_name):
+    return f'UPDATE {BOX_TABLE_NAME} \
+            SET {BOX_IS_DELETED} = 1 \
+            WHERE {BOX_NAME} = \'{box_name}\';'

@@ -4,7 +4,7 @@ CREATE TABLE box (
   comment TEXT,
   updated_time TEXT NOT NULL,
   created_time TEXT NOT NULL,
-  is_deleted integer default false not null
+  is_deleted integer default 0 not null
 );
 
 CREATE TABLE goods (

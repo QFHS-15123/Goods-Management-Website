@@ -39,6 +39,12 @@ const changeBox = (val) => {
   })
 }
 
+const delBox = (boxName) => {
+  apis.del_box(boxName).then(res =>{
+    console.log(res)
+  })
+}
+
 let newBox: Ref<Box> = ref({
   name: null,
   comment: null,
@@ -65,23 +71,23 @@ const onSubmitForm = () => {
     <el-button :key="box.name" text @click="changeBox($event)">
       {{ box.name }}
     </el-button>
-
-    <el-popover :visible="isDelPop[idx]" placement="top" :width="160">
-      <p>Are you sure to delete this?</p>
-      <div style="text-align: right; margin: 0">
-        <el-button size="small" text @click="isDelPop[idx] = false">cancel</el-button>
-        <el-button size="small" type="primary" @click="isDelPop[idx] = false">confirm</el-button>
-      </div>
-      <template #reference>
-        <el-button @click="isDelPop[idx] = true">Delete</el-button>
-      </template>
-    </el-popover>
+    <el-button @click="delBox(box.name)">Delete</el-button>-->
   </div>
+
+  <!--    <el-popover :visible="isDelPop[idx]" placement="top" :width="160">-->
+<!--      <p>Are you sure to delete this?</p>-->
+<!--      <div style="text-align: right; margin: 0">-->
+<!--        <el-button size="small" text @click="isDelPop[idx] = false">cancel</el-button>-->
+<!--        <el-button size="small" type="primary" @click="isDelPop[idx] = false">confirm</el-button>-->
+<!--      </div>-->
+<!--      <template #reference>-->
+<!--        <el-button @click="isDelPop[idx] = true">Delete</el-button>-->
+<!--      </template>-->
+<!--    </el-popover>-->
 
   <el-collapse>
     <el-collapse-item title="Trash">
-      <div v-for="(box,idx) in boxData">
-      </div>
+      <div v-for="boxName in deletedBox">{{boxName}}</div>
     </el-collapse-item>
  </el-collapse>
 

@@ -15,6 +15,14 @@ def FAIL_ADD_BOX_MSG(box_name):
     return f'Failed to add box {box_name}!'
 
 
+def SUCCESS_DEL_BOX_MSG(box_name):
+    return f'Successfully delete box {box_name}!'
+
+
+def FAIL_DEL_BOX_MSG(box_name):
+    return f'Failed to delete box {box_name}!'
+
+
 def SUCCESS_ADD_GOODS_MSG(goods_name):
     return f'Successfully add goods {goods_name}!'
 

@@ -21,11 +21,17 @@ export default {
     },
     get_all_goods(boxName) {
         return service({
-            url: '/goods?box_name=' + boxName,
+            url: '/goods/?box_name=' + boxName,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json'
             }
+        })
+    },
+    del_box(boxName){
+        return service({
+            url: '/box/delBox?box_name=' + boxName,
+            method: 'get'
         })
     },
     add_box(newBox) {
