@@ -225,7 +225,7 @@ app.register_blueprint(box.bp)
 [ Flask official tutorial](https://flask.palletsprojects.com/en/3.0.x/tutorial/database/)
 ### Connect to Database
 ```py
-# db.py
+# database.py
 import sqlite3
 from flask import current_app, g
 
@@ -301,7 +301,7 @@ CREATE TABLE goods (
 );
 ```
 ```py
-# db.py
+# database.py
 import click
 
 def init_db():
@@ -598,6 +598,8 @@ let boxName = route.query.boxName
 
 # Tips
 1. `<script setup>` equals to `created`
+2. Flask + Sqlite. When updating table, `db.commit()` is needed.
+
 # Error Record
 1. `@rollup\rollup-win32-x64-msvc\rollup.win32-x64-msvc.no de is not a valid Win32 application.`
 	Solve: `npm i @rollup/rollup-win32-x64-msvc`

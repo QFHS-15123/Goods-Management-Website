@@ -34,6 +34,12 @@ export default {
             method: 'get'
         })
     },
+    permanently_del_box(boxName){
+    return service({
+        url: '/box/permanentlyDelBox?box_name=' + boxName,
+        method: 'get'
+    })
+    },
     add_box(newBox) {
         return service({
             url: '/box/addBox',

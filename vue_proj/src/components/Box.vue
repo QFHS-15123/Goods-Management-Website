@@ -8,7 +8,7 @@ interface Box {
   comment?: string
   updated_time: string
   created_time: string
-  if_deleted?: boolean
+  is_deleted?: string
 }
 
 let isDelPop:boolean[] = []
@@ -21,14 +21,14 @@ apis.get_all_boxes().then(res =>{
   boxData.value = res.data.data
   let i:number
   for (i = 0; i<boxData.value.length; i++){
-    if (boxData.value[i] == true){
+    if (boxData.value[i].is_deleted === 'true'){
      deletedBox.push(boxData.value[i].name)
     }
   }
+  console.log(deletedBox)
   for (i = 0; i<boxData.value.length; i++){
     isDelPop[i] = false
   }
-  console.log(isDelPop)
 })
 
 let $router = useRouter()
@@ -41,6 +41,12 @@ const changeBox = (val) => {
 
 const delBox = (boxName) => {
   apis.del_box(boxName).then(res =>{
+    console.log(res)
+  })
+}
+
+const completelyDel = (boxName) => {
+  apis.permanently_del_box(boxName).then(res =>{
     console.log(res)
   })
 }
@@ -71,7 +77,8 @@ const onSubmitForm = () => {
     <el-button :key="box.name" text @click="changeBox($event)">
       {{ box.name }}
     </el-button>
-    <el-button @click="delBox(box.name)">Delete</el-button>-->
+    <el-button @click="delBox(box.name)">Delete</el-button>
+
   </div>
 
   <!--    <el-popover :visible="isDelPop[idx]" placement="top" :width="160">-->
@@ -85,11 +92,22 @@ const onSubmitForm = () => {
 <!--      </template>-->
 <!--    </el-popover>-->
 
-  <el-collapse>
-    <el-collapse-item title="Trash">
-      <div v-for="boxName in deletedBox">{{boxName}}</div>
-    </el-collapse-item>
- </el-collapse>
+      <el-collapse>
+      <el-collapse-item title="Trash">
+        <div v-for="boxName in deletedBox">
+          <span>{{boxName}}</span>
+          <span>
+            <el-popconfirm
+                width="240"
+                title="Are you sure to delete this?">
+              <template #reference>
+                <el-button @click="completelyDel(boxName)">Delete</el-button>
+              </template>
+            </el-popconfirm>
+          </span>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
 
   <el-button @click="isAddBoxForm=true">Add Box</el-button>
 

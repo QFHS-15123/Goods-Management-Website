@@ -23,6 +23,14 @@ def FAIL_DEL_BOX_MSG(box_name):
     return f'Failed to delete box {box_name}!'
 
 
+def SUCCESS_PER_DEL_BOX_MSG(box_name):
+    return f'Permanently delete box {box_name}!'
+
+
+def FAIL_PER_DEL_BOX_MSG(box_name):
+    return f'Failed to permanently delete box {box_name}!'
+
+
 def SUCCESS_ADD_GOODS_MSG(goods_name):
     return f'Successfully add goods {goods_name}!'
 

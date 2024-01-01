@@ -31,3 +31,8 @@ def del_box(box_name):
     return f'UPDATE {BOX_TABLE_NAME} \
             SET {BOX_IS_DELETED} = 1 \
             WHERE {BOX_NAME} = \'{box_name}\';'
+
+
+def permanently_del_box(box_name):
+    return f'DELETE FROM {BOX_TABLE_NAME} \
+            WHERE {BOX_NAME} = \'{box_name}\';'

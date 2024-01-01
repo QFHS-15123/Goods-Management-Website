@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from db import get_db
+from database import get_db
 import static.mapping as mapping
 from tools import *
 
