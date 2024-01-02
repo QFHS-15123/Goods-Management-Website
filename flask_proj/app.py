@@ -1,22 +1,15 @@
 import os
 
-from flask import Flask, request, render_template, make_response, g
-from flask_cors import CORS
-import database
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
-
-
-from flask import Flask
 from database import db
-from model import Box
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gmw.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 db.init_app(app)
-
 
 def create_table():
     # ensure the instance folder exists
@@ -30,7 +23,8 @@ def create_table():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    create_table()
+    # app.run(debug=True)
 
 
 # def create_app(test_config=None):

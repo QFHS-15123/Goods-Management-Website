@@ -1,16 +1,9 @@
-import sqlite3
+import datetime
 
-import click
-from flask import current_app, g
-
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import DeclarativeBase
-from flask_sqlalchemy import SQLAlchemy
-
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -19,9 +12,28 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-# class Base(DeclarativeBase):
-#     pass
-#
+
+# https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/
+# Run in Flask-SQLAlchemy 3.1.x
+class Box(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    comment: Mapped[str] = mapped_column(String)
+    updated_time: Mapped[datetime.datetime] = mapped_column(DateTime)
+    created_time: Mapped[datetime.datetime] = mapped_column(DateTime)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class Goods(db.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    comment: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String)
+    updated_time: Mapped[datetime.datetime] = mapped_column(DateTime)
+    created_time: Mapped[datetime.datetime] = mapped_column(DateTime)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+    box_id: Mapped[int] = mapped_column(ForeignKey("box.id"))
+
 #
 # def dict_factory(cursor, row):
 #     d = {}
