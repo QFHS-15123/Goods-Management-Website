@@ -4,19 +4,20 @@ from database import db
 import static.mapping as mapping
 from static.static import *
 from tools import *
-from model import Box
+from database import Box
 
 bp = Blueprint('box', __name__, url_prefix='/box')
 
 
 @bp.route('/', methods=['GET'])
 def get_all_boxes():
-    # Query for all box records
-    all_boxes = Box.query.all()
-    # Convert the box objects to a list of dictionaries
-    boxes_list = [{'id': box.id, 'name': box.name} for box in all_boxes]
-    # Return the list as JSON
-    return generate_response(data=jsonify(boxes_list))
+    boxes = query2dict(db, Box.query.all())
+    res_data = []
+    for box in boxes:
+        box.pop("id")
+        res_data.append(box)
+    print(res_data)
+    return generate_response(data=res_data)
     # db = get_db()
     # res_data = []
     # boxes = db.execute(mapping.query_all_boxes()).fetchall()

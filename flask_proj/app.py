@@ -1,15 +1,15 @@
 import os
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
-from database import db
 
+from database import db
+import box
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gmw.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+
 
 def create_table():
     # ensure the instance folder exists
@@ -22,9 +22,13 @@ def create_table():
         db.create_all()
 
 
+
+app.register_blueprint(box.bp)
+
+
 if __name__ == '__main__':
-    create_table()
-    # app.run(debug=True)
+    # create_table()
+    app.run(debug=True)
 
 
 # def create_app(test_config=None):
