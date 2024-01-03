@@ -2,6 +2,20 @@ import json
 from static.static import *
 
 
+def edit_query(db, query_data, drop_cols: list = None, datetime_cols: list = None):
+    list_dict = query2dict(db, query_data)
+    edited = []
+    for data in list_dict:
+        if drop_cols:
+            for drop_col in drop_cols:
+                data.pop(drop_col)
+        if datetime_cols:
+            for datetime_col in datetime_cols:
+                data[datetime_col] = data[datetime_col].strftime('%Y-%m-%d %H:%M:%S')
+        edited.append(data)
+    return edited
+
+
 def generate_response(data=None, message: str = SUCCESS_MESSAGE, status_code: int = SUCCESS_CODE) -> json:
     result = json.dumps({'message': message, 'status_code': status_code, 'data': data},
                         indent=2, ensure_ascii=False)  # ensure_ascii=False: Ensure the correct output of Chinese

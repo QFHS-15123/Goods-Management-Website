@@ -1,31 +1,18 @@
 from flask import Blueprint, request, jsonify
 
-from database import db
+from database import db, Box
 import static.mapping as mapping
 from static.static import *
 from tools import *
-from database import Box
 
 bp = Blueprint('box', __name__, url_prefix='/box')
 
 
 @bp.route('/', methods=['GET'])
 def get_all_boxes():
-    boxes = query2dict(db, Box.query.all())
-    res_data = []
-    for box in boxes:
-        box.pop("id")
-        res_data.append(box)
-    print(res_data)
+    boxes = Box.query.all()
+    res_data = edit_query(db, boxes, drop_cols=['id'],datetime_cols=['updated_time', 'created_time'])
     return generate_response(data=res_data)
-    # db = get_db()
-    # res_data = []
-    # boxes = db.execute(mapping.query_all_boxes()).fetchall()
-    # for box in boxes:
-    #     box.pop(mapping.BOX_ID)
-    #     res_data.append(box)
-    # res_data = int2bool(res_data, mapping.BOX_IS_DELETED)
-    # return generate_response(data=res_data)
 
 
 @bp.route('/delBox', methods=['GET'])
