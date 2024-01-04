@@ -1,13 +1,15 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 from database import db
-import box
+from flask_proj import box, goods
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gmw.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+CORS(app, supports_credentials=True)
 db.init_app(app)
 
 
@@ -22,8 +24,8 @@ def create_table():
         db.create_all()
 
 
-
 app.register_blueprint(box.bp)
+app.register_blueprint(goods.bp)
 
 
 if __name__ == '__main__':
@@ -36,7 +38,7 @@ if __name__ == '__main__':
 #     # create and configure the app
 #     app = Flask(__name__, instance_relative_config=True)
 #
-#     CORS(app, supports_credentials=True)
+#
 #     app.config.from_mapping(
 #         SECRET_KEY='dev',
 #         DATABASE=os.path.join(app.instance_path, 'gmw.sqlite'),
@@ -57,7 +59,7 @@ if __name__ == '__main__':
 #     import box
 #     app.register_blueprint(box.bp)
 #     import goods
-#     app.register_blueprint(goods.bp)
+#
 #
 #     #     res = make_response(render_template('hello.html', error=error))
 #     #     res.status = '200'

@@ -2,6 +2,7 @@
 import {Ref, ref} from "vue";
 import apis from "../api/index.js";
 import { useRouter } from "vue-router";
+import { formatNowDateTime } from "../utils/TimeUtil"
 
 interface Box {
   name: string
@@ -61,10 +62,7 @@ let newBox: Ref<Box> = ref({
 let isAddBoxForm = ref(false)
 
 const onSubmitForm = () => {
-  let currentDate = new Date()
-  let date = currentDate.toLocaleDateString()
-  newBox.value.updated_time = String(date)
-  newBox.value.created_time = String(date)
+  newBox.value.updated_time = newBox.value.created_time = formatNowDateTime()
   apis.add_box(newBox).then(res =>{
     console.log(res)
   })
