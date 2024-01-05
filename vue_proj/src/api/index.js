@@ -13,13 +13,13 @@ export default {
     //         // }
     //     })
     // },
-    get_all_boxes(){
+    getAllBoxes(){
         return service({
             url: '/box',
             method: 'get',
         })
     },
-    get_all_goods(boxName) {
+    getAllGoods(boxName) {
         return service({
             url: '/goods/?box_name=' + boxName,
             method: 'get',
@@ -28,23 +28,23 @@ export default {
             }
         })
     },
-    del_box(boxName){
+    deleteItem(mode, name){
         return service({
-            url: '/box/delBox?box_name=' + boxName,
+            url: '/del?mode=' + mode + '&name=' + name,
             method: 'get'
         })
     },
-    permanently_del_box(boxName){
+    permanentlyDelete(mode, name){
     return service({
-        url: '/box/permanentlyDelBox?box_name=' + boxName,
+        url: '/permanentlyDel?mode=' + mode + '&name=' + name,
         method: 'get'
     })
     },
-    add_box(newBox) {
+    addItem(newItem) {
         return service({
-            url: '/box/addBox',
+            url: '/add',
             method: 'post',
-            data: newBox,
+            data: newItem,
             headers: {
                 'Content-Type': 'application/json'
             }

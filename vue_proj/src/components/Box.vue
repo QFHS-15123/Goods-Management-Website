@@ -3,8 +3,10 @@ import {Ref, ref} from "vue";
 import apis from "../api/index.js";
 import { useRouter } from "vue-router";
 import { formatNowDateTime } from "../utils/TimeUtil"
+import {MODE_BOX} from "../config";
 
 interface Box {
+  mode?: string
   name: string
   comment?: string
   updated_time: string
@@ -18,11 +20,12 @@ let boxData: Ref<Box[]> = ref([])
 
 let deletedBox: Array<string> = []
 
-apis.get_all_boxes().then(res =>{
+apis.getAllBoxes().then(res =>{
   boxData.value = res.data.data
-  let i:number
+  console.log(boxData.value)
+  let i: number
   for (i = 0; i<boxData.value.length; i++){
-    if (boxData.value[i].is_deleted === 'true'){
+    if (boxData.value[i].is_deleted === true){
      deletedBox.push(boxData.value[i].name)
     }
   }
@@ -41,18 +44,21 @@ const changeBox = (val) => {
 }
 
 const delBox = (boxName) => {
-  apis.del_box(boxName).then(res =>{
+  apis.deleteItem(MODE_BOX, boxName).then(res =>{
     console.log(res)
+    location.reload()
   })
 }
 
-const completelyDel = (boxName) => {
-  apis.permanently_del_box(boxName).then(res =>{
+const permanentlyDelBox = (boxName) => {
+  apis.permanentlyDelete(MODE_BOX, boxName).then(res =>{
     console.log(res)
+    location.reload()
   })
 }
 
 let newBox: Ref<Box> = ref({
+  mode: MODE_BOX,
   name: null,
   comment: null,
   updated_time: null,
@@ -63,7 +69,7 @@ let isAddBoxForm = ref(false)
 
 const onSubmitForm = () => {
   newBox.value.updated_time = newBox.value.created_time = formatNowDateTime()
-  apis.add_box(newBox).then(res =>{
+  apis.addItem(newBox).then(res =>{
     console.log(res)
   })
 }
@@ -99,7 +105,7 @@ const onSubmitForm = () => {
                 width="240"
                 title="Are you sure to delete this?">
               <template #reference>
-                <el-button @click="completelyDel(boxName)">Delete</el-button>
+                <el-button @click="permanentlyDelBox(boxName)">Delete</el-button>
               </template>
             </el-popconfirm>
           </span>

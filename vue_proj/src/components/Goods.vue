@@ -3,6 +3,16 @@ import {ref} from "vue";
 import apis from "../api/index.js";
 import {useRoute} from "vue-router";
 
+interface Goods {
+  mode?: string
+  name: string
+  comment?: string
+  status?: string
+  updated_time: string
+  created_time: string
+  is_deleted?: string
+}
+
 let goodsData = ref([])
 
 const defaultBoxName = 'Age'
@@ -15,7 +25,7 @@ if (Object.keys(route.query).length != 0){
   boxName = defaultBoxName
 }
 
-apis.get_all_goods(boxName)
+apis.getAllGoods(boxName)
     .then(res =>{
       goodsData.value = res.data.data
     })

@@ -5,8 +5,10 @@ import App from './App.vue'
 import VueAxios from 'vue-axios'
 import axios from "axios"
 import ElementPlus from "element-plus"
-import router from "./router/index.js";
 import 'element-plus/dist/index.css'
+
+import router from "./router/index.js";
+import * as config from './config.ts';
 
 const app = createApp(App)
 app.use(VueAxios, axios)
