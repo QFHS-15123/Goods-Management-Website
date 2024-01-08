@@ -35,10 +35,16 @@ export default {
         })
     },
     permanentlyDelete(mode, name){
-    return service({
-        url: '/permanentlyDel?mode=' + mode + '&name=' + name,
-        method: 'get'
-    })
+        return service({
+            url: '/permanentlyDel?mode=' + mode + '&name=' + name,
+            method: 'get'
+        })
+    },
+    restoreItem(mode, name){
+        return service({
+            url: '/restore?mode=' + mode + '&name=' + name,
+            method: 'get'
+        })
     },
     addItem(newItem) {
         return service({

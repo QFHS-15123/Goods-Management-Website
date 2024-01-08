@@ -32,15 +32,7 @@ app.register_blueprint(goods.bp)
 
 @app.route('/del', methods=['GET'])
 def delete_item():
-    mode = request.args.get('mode')
-    name = request.args.get('name')
-    result = None
-    if mode == 'box':
-        result = Box.query.filter(Box.name == name).update({'is_deleted': True})
-    elif mode == 'goods':
-        result = Goods.query.filter(Goods.name == name).update({'is_deleted': True})
-    # rows_changed = User.query.filter_by(role='admin').update(dict(permission='add_user'))
-    return insert_del_update_response(db, result, operation_code=0, name=name)
+    return edit_is_deleted(request, True)
 
 
 @app.route('/permanentlyDel', methods=['GET'])
@@ -71,6 +63,23 @@ def add_item():
     db.session.add(new_item)
     db.session.commit()
     return SIMPLE_MSG(1, True, new_item.name)
+
+
+@app.route('/restore', methods=['GET'])
+def restore_item():
+    return edit_is_deleted(request, False)
+
+
+def edit_is_deleted(request, is_deleted: bool):
+    mode = request.args.get('mode')
+    name = request.args.get('name')
+    result = None
+    if mode == 'box':
+        result = Box.query.filter(Box.name == name).update({'is_deleted': is_deleted})
+    elif mode == 'goods':
+        result = Goods.query.filter(Goods.name == name).update({'is_deleted': is_deleted})
+    # rows_changed = User.query.filter_by(role='admin').update(dict(permission='add_user'))
+    return insert_del_update_response(db, result, operation_code=0, name=name)
 
 
 if __name__ == '__main__':

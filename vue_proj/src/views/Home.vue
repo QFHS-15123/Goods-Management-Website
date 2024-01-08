@@ -4,8 +4,11 @@ import BoxView from '../components/Box.vue'
 import GoodsView from '../components/Goods.vue'
 
 const drawer = ref(false)
+const boxKeyView = ref(0)
 
-
+const refreshBoxView = () => {
+  boxKeyView.value++
+}
 
 </script>
 
@@ -14,7 +17,7 @@ const drawer = ref(false)
   <GoodsView />
 
      <el-drawer v-model="drawer" title="Boxes">
-       <BoxView />
+       <BoxView :key="boxKeyView" @refresh-box="refreshBoxView"/>
   <!--  :before-close="handleClose"-->
     </el-drawer>
 </template>
