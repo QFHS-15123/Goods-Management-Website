@@ -9,7 +9,8 @@ bp = Blueprint('goods', __name__, url_prefix='/goods')
 
 @bp.route('/', methods=['GET'])
 def get_all_goods():
-    box_name = request.args.get('box_name')
+    box_name = request.args.get('boxName')
+    print(box_name)
     goods = (db.session.query(Goods).join(Box)
              .filter(Goods.box_id == Box.id)
              .filter(Box.name == box_name).all())

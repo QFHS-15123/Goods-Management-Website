@@ -4,6 +4,8 @@ import apis from "../api/index.js";
 import {useRoute} from "vue-router";
 import {MODE_BOX, MODE_GOODS} from "../config";
 import {formatNowDateTime} from "../utils/TimeUtil";
+import {ElNotification} from "element-plus";
+import {Delete} from "@element-plus/icons-vue";
 
 interface Goods {
   mode?: string
@@ -13,11 +15,6 @@ interface Goods {
   updated_time: string
   created_time: string
   is_deleted?: string
-}
-
-interface GoodsTreeNode {
-  label: string
-  children: GoodsTreeNode[]
 }
 
 let goodsData: Ref<Goods[]> = ref([])
@@ -41,18 +38,6 @@ apis.getAllGoods(boxName).then(res =>{
       .filter(goods => goods.is_deleted !== true)
 })
 
-const goodsTree = computed(() => {
-  return deletedGoods.value.map(goods => ({
-    label: goods.name,
-    children: [
-      { label: `Status: ${goods.status}` },
-      { label: `Updated time: ${goods.updated_time}` },
-      { label: `Created time: ${goods.created_time}` },
-      { label: `Comment: ${goods.comment}` }
-    ]
-  }));
-});
-
 defineProps({
   key: Number
 })
@@ -60,7 +45,6 @@ defineProps({
 const emit = defineEmits(['refresh-goods'])
 
 const delGoods = (goodsName) => {
-  console.log(goodsName)
   apis.deleteItem(MODE_GOODS, goodsName).then(res =>{
     emit('refresh-goods')
   })
@@ -68,6 +52,11 @@ const delGoods = (goodsName) => {
 
 const permanentlyDelGoods = (goodsName) => {
   apis.permanentlyDelete(MODE_GOODS, goodsName).then(res =>{
+    ElNotification({
+      title: "Success",
+      message: "Delete goods successfully!",
+      showClose: false
+    })
     emit('refresh-goods')
   })
 }
@@ -91,6 +80,11 @@ let isAddGoodsForm = ref(false)
 
 const onSubmitAddGoodsForm = () => {
   newGoods.value.updated_time = newGoods.value.created_time = formatNowDateTime()
+  ElNotification({
+    title: "Success",
+    message: "Add goods successfully!",
+    showClose: false
+  })
   apis.addItem(newGoods).then(res =>{
     emit('refresh-goods')
   })
@@ -129,43 +123,34 @@ const onSubmitAddGoodsForm = () => {
   </el-form>
 
 <!--  Trash bin-->
-  <el-collapse>
+  <el-collapse accordion>
     <el-collapse-item title="Trash">
-      <el-tree
-        :data="goodsTree" :props="{ children: 'children', label: 'label' }"
-        show-checkbox accordion>
-      </el-tree>
+      <el-collapse>
+        <el-collapse-item v-for="goods in deletedGoods">
+          <template #title>
+            <el-col :span="18">
+              <div style="text-align: left">  {{goods.name}}</div>
+            </el-col>
+            <el-col :span="6"><div>
+                <el-popconfirm width="240" title="Are you sure to delete this?">
+                  <template #reference>
+                    <el-button type="danger" @click="permanentlyDelGoods(goods.name)">Delete</el-button>
+                  </template>
+                </el-popconfirm>
+                <el-button @click="restore(goods.name)">Restore</el-button>
+            </div></el-col>
+          </template>
+
+          <el-descriptions>
+            <el-descriptions-item label="Status">{{goods.status}}</el-descriptions-item>
+            <el-descriptions-item label="Updated time">{{goods.updated_time}}</el-descriptions-item>
+            <el-descriptions-item label="Created time">{{goods.created_time}}</el-descriptions-item>
+            <el-descriptions-item label="Comment">{{goods.comment}}</el-descriptions-item>
+          </el-descriptions>
+        </el-collapse-item>
+      </el-collapse>
     </el-collapse-item>
   </el-collapse>
-
-<!--  <el-collapse accordion>-->
-<!--    <el-collapse-item title="Trash">-->
-<!--      <el-collapse>-->
-<!--        <el-collapse-item v-for="goods in deletedGoods">-->
-<!--          <template #title>-->
-<!--            <el-col :span="18">-->
-<!--              <div style="text-align: left">  {{goods.name}}</div>-->
-<!--            </el-col>-->
-<!--            <el-col :span="6"><div>-->
-<!--                <el-popconfirm width="240" title="Are you sure to delete this?">-->
-<!--                  <template #reference>-->
-<!--                    <el-button type="danger" @click="permanentlyDelGoods(goods.name)">Delete</el-button>-->
-<!--                  </template>-->
-<!--                </el-popconfirm>-->
-<!--                <el-button @click="restore(goods.name)">Restore</el-button>-->
-<!--            </div></el-col>-->
-<!--          </template>-->
-
-<!--          <el-descriptions>-->
-<!--            <el-descriptions-item label="Status">{{goods.status}}</el-descriptions-item>-->
-<!--            <el-descriptions-item label="Updated time">{{goods.updated_time}}</el-descriptions-item>-->
-<!--            <el-descriptions-item label="Created time">{{goods.created_time}}</el-descriptions-item>-->
-<!--            <el-descriptions-item label="Comment">{{goods.comment}}</el-descriptions-item>-->
-<!--          </el-descriptions>-->
-<!--        </el-collapse-item>-->
-<!--      </el-collapse>-->
-<!--    </el-collapse-item>-->
-<!--  </el-collapse>-->
 
 </template>
 

@@ -21,7 +21,7 @@ export default {
     },
     getAllGoods(boxName) {
         return service({
-            url: '/goods/?box_name=' + boxName,
+            url: '/goods/?boxName=' + boxName,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json'

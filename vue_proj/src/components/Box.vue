@@ -1,9 +1,10 @@
 <script setup name="BoxView" lang="ts">
-import {Ref, ref} from "vue";
+import {h, Ref, ref} from "vue";
 import apis from "../api/index.js";
 import { useRouter } from "vue-router";
 import { formatNowDateTime } from "../utils/TimeUtil"
 import { MODE_BOX } from "../config";
+import {ElNotification} from "element-plus";
 
 interface Box {
   mode?: string
@@ -28,10 +29,11 @@ apis.getAllBoxes().then(res =>{
 
 let $router = useRouter()
 const changeBox = (val) => {
-    $router.push({
-    path: '/goods',
+  $router.push({
+    path: '/',
     query: { boxName: val.target.innerText }
   })
+  location.reload()
 }
 
 defineProps({
@@ -48,6 +50,11 @@ const delBox = (boxName) => {
 
 const permanentlyDelBox = (boxName) => {
   apis.permanentlyDelete(MODE_BOX, boxName).then(res =>{
+    ElNotification({
+      title: "Success",
+      message: "Delete box successfully!",
+      showClose: false
+    })
     emit('refresh-box')
   })
 }
@@ -71,6 +78,11 @@ let isAddBoxForm = ref(false)
 const onSubmitAddBoxForm = () => {
   newBox.value.updated_time = newBox.value.created_time = formatNowDateTime()
   apis.addItem(newBox).then(res =>{
+    ElNotification({
+      title: "Success",
+      message: "Add box successfully!",
+      showClose: false
+    })
     emit('refresh-box')
   })
 }
@@ -91,9 +103,7 @@ const onSubmitAddBoxForm = () => {
       <div v-for="boxName in deletedBox">
         <span>{{boxName}}</span>
         <span>
-          <el-popconfirm
-              width="240"
-              title="Are you sure to delete this?">
+          <el-popconfirm width="240" title="Are you sure to delete this?">
             <template #reference>
               <el-button @click="permanentlyDelBox(boxName)">Delete</el-button>
             </template>

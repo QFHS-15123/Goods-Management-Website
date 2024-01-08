@@ -13,7 +13,7 @@ bp = Blueprint('box', __name__, url_prefix='/box')
 @bp.route('/', methods=['GET'])
 def get_all_boxes():
     boxes = Box.query.all()
-    res_data = edit_query(db, boxes, drop_cols=['id'],datetime_cols=['updated_time', 'created_time'])
+    res_data = edit_query(db, boxes, drop_cols=['id'], datetime_cols=['updated_time', 'created_time'])
     return generate_response(data=res_data)
 
 
