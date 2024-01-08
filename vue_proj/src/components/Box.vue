@@ -22,7 +22,8 @@ apis.getAllBoxes().then(res =>{
   deletedBox = boxData.value
     .filter(box => box.is_deleted === true)
     .map(box => box.name)
-  boxData.value = boxData.value.filter(box => box.is_deleted !== true)
+  boxData.value = boxData.value
+      .filter(box => box.is_deleted !== true)
 })
 
 let $router = useRouter()
@@ -67,40 +68,41 @@ let newBox: Ref<Box> = ref({
 
 let isAddBoxForm = ref(false)
 
-const onSubmitForm = () => {
+const onSubmitAddBoxForm = () => {
   newBox.value.updated_time = newBox.value.created_time = formatNowDateTime()
   apis.addItem(newBox).then(res =>{
     emit('refresh-box')
   })
 }
+
 </script>
 
 <template>
 
-  <div v-for="(box,idx) in boxData">
+  <div v-for="box in boxData">
     <el-button :key="box.name" text @click="changeBox($event)">
       {{ box.name }}
     </el-button>
     <el-button @click="delBox(box.name)">Delete</el-button>
   </div>
 
-      <el-collapse>
-      <el-collapse-item title="Trash">
-        <div v-for="boxName in deletedBox">
-          <span>{{boxName}}</span>
-          <span>
-            <el-popconfirm
-                width="240"
-                title="Are you sure to delete this?">
-              <template #reference>
-                <el-button @click="permanentlyDelBox(boxName)">Delete</el-button>
-              </template>
-            </el-popconfirm>
-          </span>
-          <span><el-button @click="restore(boxName)">Restore</el-button></span>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
+  <el-collapse>
+    <el-collapse-item title="Trash">
+      <div v-for="boxName in deletedBox">
+        <span>{{boxName}}</span>
+        <span>
+          <el-popconfirm
+              width="240"
+              title="Are you sure to delete this?">
+            <template #reference>
+              <el-button @click="permanentlyDelBox(boxName)">Delete</el-button>
+            </template>
+          </el-popconfirm>
+        </span>
+        <span><el-button @click="restore(boxName)">Restore</el-button></span>
+      </div>
+    </el-collapse-item>
+  </el-collapse>
 
   <el-button @click="isAddBoxForm=true">Add Box</el-button>
 
@@ -111,7 +113,7 @@ const onSubmitForm = () => {
     <el-form-item label="Comment">
       <el-input v-model="newBox.comment" type="textarea" autosize />
     </el-form-item>
-    <el-button type="primary" @click="onSubmitForm">Create</el-button>
+    <el-button type="primary" @click="onSubmitAddBoxForm">Create</el-button>
   </el-form>
 
 </template>
