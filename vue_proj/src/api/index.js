@@ -21,7 +21,7 @@ export default {
     },
     getAllGoods(boxName) {
         return service({
-            url: '/goods/?boxName=' + boxName,
+            url: '/goods/?box_name=' + boxName,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json'
@@ -46,9 +46,9 @@ export default {
             method: 'get'
         })
     },
-    addItem(newItem) {
+    addGoods(newItem) {
         return service({
-            url: '/add',
+            url: '/goods/add',
             method: 'post',
             data: newItem,
             headers: {

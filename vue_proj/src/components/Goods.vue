@@ -1,126 +1,216 @@
 <script setup name="GoodsView" lang="ts">
-import {computed, Ref, ref} from "vue";
-import apis from "../api/index.js";
-import {useRoute} from "vue-router";
-import {MODE_BOX, MODE_GOODS} from "../config";
-import {formatNowDateTime} from "../utils/TimeUtil";
-import {ElNotification} from "element-plus";
-import {Delete} from "@element-plus/icons-vue";
+  import {Ref, ref} from "vue";
+  import apis from "../api/index.js";
+  import {useRoute} from "vue-router";
+  import {MODE_GOODS} from "../config";
+  import {formatNowDateTime} from "../utils/TimeUtil";
+  import {objectIsNull} from "../utils/ObjectUtils";
+  import {ElMessageBox, ElNotification} from "element-plus";
+  import {Delete, Edit} from "@element-plus/icons-vue";
 
-interface Goods {
-  mode?: string
-  name: string
-  comment?: string
-  status?: string
-  updated_time: string
-  created_time: string
-  is_deleted?: string
-}
+  interface Goods {
+    mode?: string
+    name: string
+    comment?: string
+    status?: string
+    updated_time: string
+    created_time: string
+    is_deleted?: string
+    box_name?: string
+  }
 
-let goodsData: Ref<Goods[]> = ref([])
-let deletedGoods: Ref<Goods[]> = ref([])
+  let goodsData: Ref<Goods[]> = ref([])
+  let deletedGoods: Ref<Goods[]> = ref([])
 
-const defaultBoxName = 'Age'
-let boxName: string = ''
-const route = useRoute()
+  const defaultbox_name = 'Age'
+  let box_name: string = ''
+  const route = useRoute()
 
-if (Object.keys(route.query).length != 0){
-  boxName = route.query.boxName.toString()
-} else {
-  boxName = defaultBoxName
-}
+  if (Object.keys(route.query).length != 0){
+    box_name = route.query.box_name.toString()
+  } else {
+    box_name = defaultbox_name
+  }
 
-apis.getAllGoods(boxName).then(res =>{
-  goodsData.value = res.data.data
-  deletedGoods.value = goodsData.value
-      .filter(goods => goods.is_deleted === true)
-  goodsData.value = goodsData.value
-      .filter(goods => goods.is_deleted !== true)
-})
-
-defineProps({
-  key: Number
-})
-
-const emit = defineEmits(['refresh-goods'])
-
-const delGoods = (goodsName) => {
-  apis.deleteItem(MODE_GOODS, goodsName).then(res =>{
-    emit('refresh-goods')
+  apis.getAllGoods(box_name).then(res =>{
+    goodsData.value = res.data.data
+    deletedGoods.value = goodsData.value
+        .filter(goods => goods.is_deleted === true)
+    goodsData.value = goodsData.value
+        .filter(goods => goods.is_deleted !== true)
   })
-}
 
-const permanentlyDelGoods = (goodsName) => {
-  apis.permanentlyDelete(MODE_GOODS, goodsName).then(res =>{
-    ElNotification({
-      title: "Success",
-      message: "Delete goods successfully!",
-      showClose: false
+  defineProps({
+    key: Number
+  })
+
+  const emit = defineEmits(['refresh-goods'])
+
+  const delGoods = (goodsName) => {
+    apis.deleteItem(MODE_GOODS, goodsName).then(res =>{
+      emit('refresh-goods')
     })
-    emit('refresh-goods')
-  })
-}
+  }
 
-const restore = (goodsName) => {
-  apis.restoreItem(MODE_GOODS, goodsName).then(res =>{
-    emit('refresh-goods')
-  })
-}
+  const permanentlyDelGoods = (goodsName) => {
+    apis.permanentlyDelete(MODE_GOODS, goodsName).then(res =>{
+      ElNotification({
+        title: "Success",
+        message: "Delete goods successfully!",
+        showClose: false
+      })
+      emit('refresh-goods')
+    })
+  }
 
-let newGoods: Ref<Goods> = ref({
-  mode: MODE_GOODS,
-  name: null,
-  comment: null,
-  status: 'full',
-  updated_time: null,
-  created_time: null
-})
+  const restore = (goodsName) => {
+    apis.restoreItem(MODE_GOODS, goodsName).then(res =>{
+      emit('refresh-goods')
+    })
+  }
 
-let isAddGoodsForm = ref(false)
+  let newGoods: Ref<Goods> = ref({
+    mode: MODE_GOODS,
+    name: null,
+    comment: null,
+    status: 'full',
+    updated_time: null,
+    created_time: null,
+    box_name: box_name
+  })
+  let isAddGoodsDialog: Ref<boolean> = ref(false)
 
-const onSubmitAddGoodsForm = () => {
-  newGoods.value.updated_time = newGoods.value.created_time = formatNowDateTime()
-  ElNotification({
-    title: "Success",
-    message: "Add goods successfully!",
-    showClose: false
-  })
-  apis.addItem(newGoods).then(res =>{
-    emit('refresh-goods')
-  })
-}
+  const handleAddDialogClose = (done: () => void) => {
+    if (objectIsNull(newGoods.value,
+        ['mode', 'status', 'updated_time', 'created_time', 'box_name'])) {
+      done()
+    } else {
+      ElMessageBox.confirm(
+        'Changes not saved, are you sure you want to close it?',
+        'Warning',
+        {
+          confirmButtonText: 'Back',
+          cancelButtonText: 'Close',
+        })
+        .then(() => {})
+        .catch(() => { done() }
+      )
+    }
+  }
+
+  const onSubmitAddGoodsForm = () => {
+    newGoods.value.updated_time = newGoods.value.created_time = formatNowDateTime()
+    apis.addGoods(newGoods).then(res =>{
+      isAddGoodsDialog = ref(false)
+      ElNotification({
+        title: "Success",
+        message: "Add goods successfully!",
+        showClose: false
+      })
+      emit('refresh-goods')
+    })
+  }
+
+  let isEditGoodsDialog: Ref<boolean> = ref(false)
+  let editingGoods: Ref<Goods>
+
+  const openEditGoodsDialog = (name: string) => {
+    isEditGoodsDialog.value = true
+    editingGoods = ref(goods)
+    console.log(goods)
+  }
+
+  const handleEditFormChange = (col: string, value: string) => {
+    apis.updateGoods(col, value, ).then(res =>{
+      ElNotification({
+        title: "Success",
+        message: "Edit goods successfully!",
+        showClose: false
+      })
+      emit('refresh-goods')
+    })
+  }
 </script>
 
 <template>
-  <el-table :data="goodsData" style="width: 100%">
-    <el-table-column prop="name" label="Name" width="180" />
-    <el-table-column prop="status" label="Status" width="70" />
-    <el-table-column prop="updated_time" label="Updated time" width="130" />
-    <el-table-column prop="created_time" label="Created time" width="130" />
-    <el-table-column prop="comment" label="Comment" width="200" />
-    <el-table-column fixed="right" label="Operations" width="120">
-      <template #default="scope">
-        <el-button link type="primary" size="small" @click="delGoods(scope.row.name)">
-          Delete
+  <!--  Add Goods-->
+  <el-button @click="isAddGoodsDialog = true">Add Goods</el-button>
+
+  <el-dialog
+    v-model="isAddGoodsDialog" :before-close="handleAddDialogClose"
+    title="Add New Goods" width="60%" align-center draggable>
+    <el-form id="addBoxForm" :model="newGoods">
+      <el-form-item label="Name">
+        <el-input v-model="newGoods.name" />
+      </el-form-item>
+      <el-form-item label="Status">
+        <el-input v-model="newGoods.status" />
+      </el-form-item>
+      <el-form-item label="Comment">
+        <el-input v-model="newGoods.comment" type="textarea" autosize />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span>
+        <el-button type="primary" @click="onSubmitAddGoodsForm">
+          Confirm
         </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
+<!--  Goods Gallery-->
+  <el-descriptions :title='`${goods.name} ${goods.status}`' v-for="goods in goodsData" :column=2 border>
+      <template #extra>
+        <el-button  @click="delGoods(goods.name)"
+                    type="danger" :icon="Delete" circle />
+        <el-button @click="openEditGoodsDialog(goods.name)"
+                   type="primary" :icon="Edit" circle />
       </template>
-    </el-table-column>
-  </el-table>
+        <el-descriptions-item label="Updated time">{{goods.updated_time}}</el-descriptions-item>
+        <el-descriptions-item label="Created time">{{goods.created_time}}</el-descriptions-item>
+        <el-descriptions-item label="Comment">{{goods.comment}}</el-descriptions-item>
+      </el-descriptions>
 
-  <el-button @click="isAddGoodsForm = true">Add Goods</el-button>
+<!--  <el-table :data="goodsData" style="width: 100%">-->
+<!--    <el-table-column prop="name" label="Name" width="180" />-->
+<!--    <el-table-column prop="status" label="Status" width="70" />-->
+<!--    <el-table-column prop="updated_time" label="Updated time" width="130" />-->
+<!--    <el-table-column prop="created_time" label="Created time" width="130" />-->
+<!--    <el-table-column prop="comment" label="Comment" width="200" />-->
+<!--    <el-table-column fixed="right" label="Operations" width="120">-->
+<!--      <template #default="scope">-->
+<!--        <el-button link type="primary" size="small" @click="delGoods(scope.row.name)">-->
+<!--          Delete-->
+<!--        </el-button>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
+<!--  </el-table>-->
 
-  <el-form id="addBoxForm" v-show="isAddGoodsForm" :model="newGoods">
-    <el-form-item label="Name">
-      <el-input v-model="newGoods.name" />
-    </el-form-item>
-    <el-form-item label="Status">
-      <el-input v-model="newGoods.status" />
-    </el-form-item>
-    <el-form-item label="Comment">
-      <el-input v-model="newGoods.comment" type="textarea" autosize />
-    </el-form-item>
-    <el-button type="primary" @click="onSubmitAddGoodsForm">Create</el-button>
-  </el-form>
+<!--  Edit Goods-->
+  <el-dialog
+    v-model="isEditGoodsDialog"
+    title="Edit Goods" width="60%" align-center draggable>
+    <el-form id="addBoxForm" :model="editingGoods">
+      <el-form-item label="Name">
+        <el-input v-model="editingGoods.name" @change="handleEditFormChange('name', editingGoods.name)" />
+      </el-form-item>
+      <el-form-item label="Status">
+        <el-input v-model="editingGoods.status" @change="handleEditFormChange('status', editingGoods.status)" />
+      </el-form-item>
+      <el-form-item label="Comment">
+        <el-input v-model="editingGoods.comment" @change="handleEditFormChange('comment', editingGoods.comment)"
+                  type="textarea" autosize />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span>
+        <el-button type="primary" @click="onSubmitAddGoodsForm">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 
 <!--  Trash bin-->
   <el-collapse accordion>

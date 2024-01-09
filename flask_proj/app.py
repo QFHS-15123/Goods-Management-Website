@@ -72,12 +72,12 @@ def restore_item():
 
 def edit_is_deleted(request, is_deleted: bool):
     mode = request.args.get('mode')
-    name = request.args.get('name')
+    name_list = request.args.getlist('nameArray')
     result = None
     if mode == 'box':
-        result = Box.query.filter(Box.name == name).update({'is_deleted': is_deleted})
+        result = Box.query.filter(Box.name == name_list[0]).update({'is_deleted': is_deleted})
     elif mode == 'goods':
-        result = Goods.query.filter(Goods.name == name).update({'is_deleted': is_deleted})
+        result = Goods.query.filter(Goods.name == name_list[0]).update({'is_deleted': is_deleted})
     # rows_changed = User.query.filter_by(role='admin').update(dict(permission='add_user'))
     return insert_del_update_response(db, result, operation_code=0, name=name)
 
