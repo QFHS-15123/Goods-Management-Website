@@ -1,19 +1,28 @@
 <script setup name="Home">
-import {ref} from "vue";
-import BoxView from '../components/Box.vue'
-import GoodsView from '../components/Goods.vue'
+  import {ref} from "vue";
+  import BoxView from '../components/Box.vue'
+  import GoodsView from '../components/Goods.vue'
+  import {useRoute} from "vue-router";
+  import api from "../api/index.js";
 
-const drawer = ref(false)
-const boxKeyView = ref(0)
-const goodsKeyView = ref(0)
+  const route = useRoute()
+  if (Object.keys(route.query).length === 0){
+    api.openBox().then(res =>{
+      console.log(res)
+    })
+  }
 
-const refreshBoxView = () => {
-  boxKeyView.value++
-}
+  const drawer = ref(false)
+  const boxKeyView = ref(0)
+  const goodsKeyView = ref(0)
 
-const refreshGoodsView = () => {
-  goodsKeyView.value++
-}
+  const refreshBoxView = () => {
+    boxKeyView.value++
+  }
+
+  const refreshGoodsView = () => {
+    goodsKeyView.value++
+  }
 
 </script>
 

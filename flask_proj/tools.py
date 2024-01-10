@@ -20,14 +20,14 @@ def edit_query(db, query_data, drop_cols: list = None, datetime_cols: list = Non
 def insert_del_update_response(db, update_result: int, operation_code: int, name: str) -> json:
     if update_result == 1:
         db.session.commit()
-        return generate_response(message=SIMPLE_MSG(operation_code, True, name))
+        return generate_json(message=SIMPLE_MSG(operation_code, True, name))
     elif update_result == 0:
-        return generate_response(status_code=ERROR_CODE, message=SIMPLE_MSG(operation_code, False, name))
+        return generate_json(status_code=ERROR_CODE, message=SIMPLE_MSG(operation_code, False, name))
     else:
-        return generate_response(status_code=ERROR_CODE, message=UNKNOWN_ERROR_MSG())
+        return generate_json(status_code=ERROR_CODE, message=UNKNOWN_ERROR_MSG())
 
 
-def generate_response(data=None, message: str = SUCCESS_MESSAGE, status_code: int = SUCCESS_CODE) -> json:
+def generate_json(data=None, message: str = SUCCESS_MESSAGE, status_code: int = SUCCESS_CODE) -> json:
     return json.dumps({'message': message, 'status_code': status_code, 'data': data},
                       indent=2, ensure_ascii=False)  # ensure_ascii=False: Ensure the correct output of Chinese
 

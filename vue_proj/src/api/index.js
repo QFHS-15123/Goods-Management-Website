@@ -13,6 +13,12 @@ export default {
     //         // }
     //     })
     // },
+    openBox() {
+        return service({
+            url: '/open_box',
+            method: 'get',
+        })
+    },
     getAllBoxes(){
         return service({
             url: '/box',
@@ -46,14 +52,30 @@ export default {
             method: 'get'
         })
     },
-    addGoods(newItem) {
+    addBox(newBox) {
         return service({
-            url: '/goods/add',
+            url: '/box/add',
             method: 'post',
-            data: newItem,
+            data: newBox,
             headers: {
                 'Content-Type': 'application/json'
             }
+        })
+    },
+    addGoods(newGoods) {
+        return service({
+            url: '/goods/add',
+            method: 'post',
+            data: newGoods,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    },
+    updateGoods(boxName, goodsName, col, value) {
+        return service({
+            url: '/goods/update?box_name=' + boxName + '&goods_name=' + goodsName + '&col=' + col + '&value=' + value,
+            method: 'get'
         })
     }
 }

@@ -27,6 +27,8 @@
   const route = useRoute()
 
   if (Object.keys(route.query).length != 0){
+    // find the last opened box
+
     box_name = route.query.box_name.toString()
   } else {
     box_name = defaultbox_name
@@ -113,22 +115,21 @@
 
   let isEditGoodsDialog: Ref<boolean> = ref(false)
   let editingGoods: Ref<Goods>
+  let beforeEditGoods: Goods
 
-  const openEditGoodsDialog = (name: string) => {
+  const openEditGoodsDialog = (goods: Goods) => {
     isEditGoodsDialog.value = true
-    editingGoods = ref(goods)
-    console.log(goods)
+    beforeEditGoods = goods
+    editingGoods = ref(Object.assign({}, goods))
   }
 
-  const handleEditFormChange = (col: string, value: string) => {
-    apis.updateGoods(col, value, ).then(res =>{
-      ElNotification({
-        title: "Success",
-        message: "Edit goods successfully!",
-        showClose: false
+  const handleEditFormInput = (col: string, value: string) => {
+    if (beforeEditGoods !== editingGoods.value) {
+      editingGoods.value.updated_time = formatNowDateTime()
+      apis.updateGoods(editingGoods.value.box_name, editingGoods.value.name, col, value).then(res =>{
+        console.log(res)
       })
-      emit('refresh-goods')
-    })
+    }
   }
 </script>
 
@@ -164,7 +165,7 @@
       <template #extra>
         <el-button  @click="delGoods(goods.name)"
                     type="danger" :icon="Delete" circle />
-        <el-button @click="openEditGoodsDialog(goods.name)"
+        <el-button @click="openEditGoodsDialog(goods)"
                    type="primary" :icon="Edit" circle />
       </template>
         <el-descriptions-item label="Updated time">{{goods.updated_time}}</el-descriptions-item>
@@ -193,13 +194,13 @@
     title="Edit Goods" width="60%" align-center draggable>
     <el-form id="addBoxForm" :model="editingGoods">
       <el-form-item label="Name">
-        <el-input v-model="editingGoods.name" @change="handleEditFormChange('name', editingGoods.name)" />
+        <el-input v-model="editingGoods.name" @input="handleEditFormInput('name', editingGoods.name)" />
       </el-form-item>
       <el-form-item label="Status">
-        <el-input v-model="editingGoods.status" @change="handleEditFormChange('status', editingGoods.status)" />
+        <el-input v-model="editingGoods.status" @input="handleEditFormInput('status', editingGoods.status)" />
       </el-form-item>
       <el-form-item label="Comment">
-        <el-input v-model="editingGoods.comment" @change="handleEditFormChange('comment', editingGoods.comment)"
+        <el-input v-model="editingGoods.comment" @input="handleEditFormInput('comment', editingGoods.comment)"
                   type="textarea" autosize />
       </el-form-item>
     </el-form>

@@ -77,7 +77,7 @@ let isAddBoxForm = ref(false)
 
 const onSubmitAddBoxForm = () => {
   newBox.value.updated_time = newBox.value.created_time = formatNowDateTime()
-  apis.addItem(newBox).then(res =>{
+  apis.addBox(newBox).then(res =>{
     ElNotification({
       title: "Success",
       message: "Add box successfully!",
