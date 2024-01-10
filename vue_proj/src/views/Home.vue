@@ -2,14 +2,21 @@
   import {ref} from "vue";
   import BoxView from '../components/Box.vue'
   import GoodsView from '../components/Goods.vue'
-  import {useRoute} from "vue-router";
+  import {useRoute, useRouter} from "vue-router";
   import api from "../api/index.js";
+  import Cookies from "js-cookie";
 
+  const $router = useRouter()
   const route = useRoute()
   if (Object.keys(route.query).length === 0){
-    api.openBox().then(res =>{
-      console.log(res)
-    })
+    console.log(1)
+    Cookies.set('boxName', 'Age')
+    const boxName = Cookies.get('boxName')
+    console.log(boxName)
+    // $router.push({
+    //   path: '/',
+    //   query: { boxName: boxName }
+    // })
   }
 
   const drawer = ref(false)

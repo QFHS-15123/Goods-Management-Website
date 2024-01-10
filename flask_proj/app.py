@@ -30,15 +30,15 @@ app.register_blueprint(box.bp)
 app.register_blueprint(goods.bp)
 
 
-@app.route('/open_box', methods=['GET'])
-def home():
-    # box_name = request.args.get('box_name', default=None)
-    # if not box_name:
-    box_name = request.cookies.get('last_opened_box_name')
-    if not box_name:
-        last_update_box = Box.query.order_by(Box.updated_time.desc()).first()
-        box_name = last_update_box.name
-    return redirect(f'/goods/?box_name={box_name}', 302)
+# @app.route('/open_box', methods=['GET'])
+# def home():
+#     # box_name = request.args.get('box_name', default=None)
+#     # if not box_name:
+#     box_name = request.cookies.get('last_opened_box_name')
+#     if not box_name:
+#         last_update_box = Box.query.order_by(Box.updated_time.desc()).first()
+#         box_name = last_update_box.name
+#     return redirect(f'/goods/?box_name={box_name}', 302)
     # else:
     #     return None
 # @app.route('/del', methods=['GET'])

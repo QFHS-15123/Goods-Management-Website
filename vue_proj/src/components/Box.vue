@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import { formatNowDateTime } from "../utils/TimeUtil"
 import { MODE_BOX } from "../config";
 import {ElNotification} from "element-plus";
+import {setCookie} from "../utils/CookieUtils.ts";
 
 interface Box {
   mode?: string
@@ -28,12 +29,14 @@ apis.getAllBoxes().then(res =>{
 })
 
 let $router = useRouter()
-const changeBox = (val) => {
+const changeBox = (e) => {
+  const boxName = e.target.innerText
   $router.push({
     path: '/',
-    query: { boxName: val.target.innerText }
+    query: { boxName: boxName }
   })
   location.reload()
+  setCookie('boxName', boxName)
 }
 
 defineProps({

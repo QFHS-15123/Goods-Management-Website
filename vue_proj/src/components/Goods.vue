@@ -26,6 +26,7 @@
   let box_name: string = ''
   const route = useRoute()
 
+
   if (Object.keys(route.query).length != 0){
     // find the last opened box
 

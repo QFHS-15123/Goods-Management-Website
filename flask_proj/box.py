@@ -14,9 +14,9 @@ bp = Blueprint('box', __name__, url_prefix='/box')
 def get_all_boxes():
     boxes = Box.query.all()
     res_data = edit_query(db, boxes, drop_cols=['id'], datetime_cols=['updated_time', 'created_time'])
-    response = Response(generate_json(data=res_data), content_type='application/json')
-    response.set_cookie('last_opened_box', box_name)
-    return response
+    # response = Response(generate_json(data=res_data), content_type='application/json')
+    # response.set_cookie('last_opened_box', box_name)
+    return generate_json(data=res_data)
 
 
 @bp.route('/edit', methods=['POST'])
