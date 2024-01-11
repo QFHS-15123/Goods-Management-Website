@@ -607,7 +607,8 @@ let boxName = route.query.boxName
 	Solve: Router in vite is different from that in vue
 3. No styles
 	Solve: Add `import 'element-plus/dist/index.css'` to `main.js` **GOD! THAT BOTHERED ME TWO HOURS!!!!!**
-
+4. Error with vite: `[vite] error while updating dependencies:` Reporting removed packages no such file or directory
+	Solve: Delete node_modules/.vite and run again. See in [official website](https://vitejs.cn/vite3-cn/guide/dep-pre-bundling.html#customizing-the-behavior).
 
 function getKeyNames<T>(obj: T): (keyof T)[] {  
   return Object.keys(obj) as (keyof T)[]  

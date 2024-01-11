@@ -1,12 +1,15 @@
 <script setup name="GoodsView" lang="ts">
   import {Ref, ref} from "vue";
   import apis from "../api/index.js";
-  import {useRoute} from "vue-router";
+  import {useRoute, useRouter} from "vue-router";
   import {MODE_GOODS} from "../config";
   import {formatNowDateTime} from "../utils/TimeUtil";
   import {objectIsNull} from "../utils/ObjectUtils";
   import {ElMessageBox, ElNotification} from "element-plus";
   import {Delete, Edit} from "@element-plus/icons-vue";
+  import {stringIsEmpty} from "../utils/StringUtils";
+  import api from "../api";
+  import Cookies from "js-cookie";
 
   interface Goods {
     mode?: string
@@ -24,9 +27,24 @@
 
   const defaultbox_name = 'Age'
   let box_name: string = ''
+
+  const $router = useRouter()
   const route = useRoute()
-
-
+  if (Object.keys(route.query).length === 0){
+    Cookies.set('boxName', '')
+    let boxName = Cookies.get('boxName')
+    console.log(boxName)
+    if (stringIsEmpty(boxName)){
+      console.log(boxName)
+      api.openBox().then(res =>{
+        boxName = res.data
+      })
+    }
+    $router.push({
+      path: '/',
+      query: { boxName: boxName }
+    })
+  }
   if (Object.keys(route.query).length != 0){
     // find the last opened box
 

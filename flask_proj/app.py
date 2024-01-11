@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, Response
 from flask_cors import CORS
 
 from database import db, Box, Goods
@@ -28,6 +28,14 @@ def create_table():
 
 app.register_blueprint(box.bp)
 app.register_blueprint(goods.bp)
+
+
+@app.route('/open_box', methods=['GET'])
+def open_box():
+    last_update_box = Box.query.order_by(Box.updated_time.desc()).first()
+    box_name = last_update_box.name
+    print(box_name)
+    return box_name
 
 
 # @app.route('/open_box', methods=['GET'])

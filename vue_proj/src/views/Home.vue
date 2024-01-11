@@ -5,19 +5,9 @@
   import {useRoute, useRouter} from "vue-router";
   import api from "../api/index.js";
   import Cookies from "js-cookie";
+  import stringIsEmpty from '../utils/StringUtils.ts'
 
-  const $router = useRouter()
-  const route = useRoute()
-  if (Object.keys(route.query).length === 0){
-    console.log(1)
-    Cookies.set('boxName', 'Age')
-    const boxName = Cookies.get('boxName')
-    console.log(boxName)
-    // $router.push({
-    //   path: '/',
-    //   query: { boxName: boxName }
-    // })
-  }
+
 
   const drawer = ref(false)
   const boxKeyView = ref(0)
