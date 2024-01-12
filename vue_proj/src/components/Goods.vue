@@ -25,35 +25,39 @@
   let goodsData: Ref<Goods[]> = ref([])
   let deletedGoods: Ref<Goods[]> = ref([])
 
-  const defaultbox_name = 'Age'
-  let box_name: string = ''
+  let boxName: string
 
   const $router = useRouter()
   const route = useRoute()
   if (Object.keys(route.query).length === 0){
-    Cookies.set('boxName', '')
-    let boxName = Cookies.get('boxName')
-    console.log(boxName)
+    boxName = Cookies.get('boxName')
     if (stringIsEmpty(boxName)){
-      console.log(boxName)
       api.openBox().then(res =>{
-        boxName = res.data
+        $router.push({
+          path: '/',
+          query: { boxName: res.data }
+        })
+        Cookies.set('boxName', res.data)
+      })
+    } else {
+      $router.push({
+        path: '/',
+        query: { boxName: boxName }
       })
     }
-    $router.push({
-      path: '/',
-      query: { boxName: boxName }
-    })
-  }
-  if (Object.keys(route.query).length != 0){
-    // find the last opened box
-
-    box_name = route.query.box_name.toString()
   } else {
-    box_name = defaultbox_name
+    boxName = route.query.boxName.toString()
   }
 
-  apis.getAllGoods(box_name).then(res =>{
+  // if (Object.keys(route.query).length != 0){
+  //   // find the last opened box
+  //
+  //   box_name = route.query.box_name.toString()
+  // } else {
+  //   box_name = defaultbox_name
+  // }
+
+  apis.getAllGoods(boxName).then(res =>{
     goodsData.value = res.data.data
     deletedGoods.value = goodsData.value
         .filter(goods => goods.is_deleted === true)
@@ -97,7 +101,7 @@
     status: 'full',
     updated_time: null,
     created_time: null,
-    box_name: box_name
+    box_name: boxName
   })
   let isAddGoodsDialog: Ref<boolean> = ref(false)
 

@@ -34,7 +34,6 @@ app.register_blueprint(goods.bp)
 def open_box():
     last_update_box = Box.query.order_by(Box.updated_time.desc()).first()
     box_name = last_update_box.name
-    print(box_name)
     return box_name
 
 

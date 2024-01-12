@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import { formatNowDateTime } from "../utils/TimeUtil"
 import { MODE_BOX } from "../config";
 import {ElNotification} from "element-plus";
-import {setCookie} from "../utils/CookieUtils.ts";
+import Cookies from "js-cookie";
 
 interface Box {
   mode?: string
@@ -28,15 +28,9 @@ apis.getAllBoxes().then(res =>{
       .filter(box => box.is_deleted !== true)
 })
 
-let $router = useRouter()
-const changeBox = (e) => {
-  const boxName = e.target.innerText
-  $router.push({
-    path: '/',
-    query: { boxName: boxName }
-  })
-  location.reload()
-  setCookie('boxName', boxName)
+const changeBox = (boxName: string) => {
+  Cookies.set('boxName', boxName)
+  location.href = '/?boxName=' + boxName
 }
 
 defineProps({
@@ -95,7 +89,7 @@ const onSubmitAddBoxForm = () => {
 <template>
 
   <div v-for="box in boxData">
-    <el-button :key="box.name" text @click="changeBox($event)">
+    <el-button :key="box.name" text @click="changeBox(box.name)">
       {{ box.name }}
     </el-button>
     <el-button @click="delBox(box.name)">Delete</el-button>
