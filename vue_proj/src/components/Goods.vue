@@ -49,14 +49,6 @@
     boxName = route.query.boxName.toString()
   }
 
-  // if (Object.keys(route.query).length != 0){
-  //   // find the last opened box
-  //
-  //   box_name = route.query.box_name.toString()
-  // } else {
-  //   box_name = defaultbox_name
-  // }
-
   apis.getAllGoods(boxName).then(res =>{
     goodsData.value = res.data.data
     deletedGoods.value = goodsData.value
@@ -149,7 +141,7 @@
   const handleEditFormInput = (col: string, value: string) => {
     if (beforeEditGoods !== editingGoods.value) {
       editingGoods.value.updated_time = formatNowDateTime()
-      apis.updateGoods(editingGoods.value.box_name, editingGoods.value.name, col, value).then(res =>{
+      apis.updateGoods(editingGoods.value.box_name, editingGoods.value.name, col, value, editingGoods.value.updated_time).then(res =>{
         console.log(res)
       })
     }
@@ -215,7 +207,7 @@
   <el-dialog
     v-model="isEditGoodsDialog"
     title="Edit Goods" width="60%" align-center draggable>
-    <el-form id="addBoxForm" :model="editingGoods">
+    <el-form :model="editingGoods">
       <el-form-item label="Name">
         <el-input v-model="editingGoods.name" @input="handleEditFormInput('name', editingGoods.name)" />
       </el-form-item>

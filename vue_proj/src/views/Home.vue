@@ -7,8 +7,6 @@
   import Cookies from "js-cookie";
   import stringIsEmpty from '../utils/StringUtils.ts'
 
-
-
   const drawer = ref(false)
   const boxKeyView = ref(0)
   const goodsKeyView = ref(0)

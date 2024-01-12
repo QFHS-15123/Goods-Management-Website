@@ -3,16 +3,6 @@ import transformRequest from '../utils/transformRequest'
 
 
 export default {
-    // login(user){
-    //     return service({
-    //         url: '/',
-    //         method: 'get',
-    //         // data: transformRequest(user),
-    //         // headers: {
-    //         //     'Content-Type': 'application/x-www-form-urlencoded'
-    //         // }
-    //     })
-    // },
     openBox() {
         return service({
             url: '/open_box',
@@ -72,9 +62,16 @@ export default {
             }
         })
     },
-    updateGoods(boxName, goodsName, col, value) {
+    updateGoods(boxName, goodsName, col, value, updateTime) {
         return service({
-            url: '/goods/update?box_name=' + boxName + '&goods_name=' + goodsName + '&col=' + col + '&value=' + value,
+            url: '/goods/update?box_name=' + boxName + '&goods_name=' + goodsName + '&col=' + col + '&value=' + value
+                + '&update_time=' + updateTime,
+            method: 'get'
+        })
+    },
+    updateBox(name, value, updatedTime) {
+        return service({
+            url: '/box/update?name=' + name + '&value=' + value + '&updated_time=' + updatedTime,
             method: 'get'
         })
     }

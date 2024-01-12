@@ -14,18 +14,18 @@ bp = Blueprint('box', __name__, url_prefix='/box')
 def get_all_boxes():
     boxes = Box.query.all()
     res_data = edit_query(db, boxes, drop_cols=['id'], datetime_cols=['updated_time', 'created_time'])
-    # response = Response(generate_json(data=res_data), content_type='application/json')
-    # response.set_cookie('last_opened_box', box_name)
     return generate_json(data=res_data)
 
 
-@bp.route('/edit', methods=['POST'])
-def edit():
-    box = request.json['_value']
-    box['created_time'] = datetime.strptime(box['created_time'], '%Y-%m-%d %H:%M:%S')
-    box['updated_time'] = datetime.strptime(box['updated_time'], '%Y-%m-%d %H:%M:%S')
-    result = Box.query.filter(Box.name == box['name']).update(box)
-    return insert_del_update_response(db, result, operation_code=1, name=box['name'])
+@bp.route('/update', methods=['GET'])
+def update():
+    box_name = request.args.get('name')
+    value = request.args.get('value')
+    updated_time = request.args.get('updated_time')
+    updated_time = datetime.strptime(updated_time, '%Y-%m-%d %H:%M:%S')
+    result = (Box.query.filter(Box.name == box_name)
+              .update({'name': value, 'updated_time': updated_time}))
+    return insert_del_update_response(db, result, operation_code=0, name=box_name)
 
 
 @bp.route('/del', methods=['GET'])

@@ -19,15 +19,6 @@ def get_all_goods():
     return generate_json(data=res_data)
 
 
-# @bp.route('/edit', methods=['POST'])
-# def edit():
-#     box = request.json['_value']
-#     box['created_time'] = datetime.datetime.strptime(box['created_time'], '%Y-%m-%d %H:%M:%S')
-#     box['updated_time'] = datetime.datetime.strptime(box['updated_time'], '%Y-%m-%d %H:%M:%S')
-#     result = Box.query.filter(Box.name == box['name']).update(box)
-#     return insert_del_update_response(db, result, operation_code=1, name=box['name'])
-
-
 @bp.route('/del', methods=['GET'])
 def delete():
     box_name = request.args.get('box_name')
